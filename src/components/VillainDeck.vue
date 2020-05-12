@@ -5,6 +5,7 @@
             :key="n"
             :src="cardBackSrc"
             alt="back"
+            class="card"
         />
     </div>
 </template>
@@ -34,7 +35,7 @@ export default Vue.extend({
 <style lang="scss" scoped>
 img {
     position: absolute;
-    width: 10em;
+    width: 7em;
     border: 1px currentColor solid;
     border-radius: 1em;
     box-shadow: 1px -1px 1px;
@@ -42,8 +43,8 @@ img {
 
 @for $i from 1 through 8 {
     img:nth-child(#{$i}) {
-        transform: rotateZ(-12deg + $i * 3deg);
         transform-origin: 50% 120%;
+        transform: rotateZ($i * 5deg - 20deg);
     }
 }
 
@@ -60,7 +61,7 @@ img {
 }
 
 @media screen and (max-width: 780px) {
-    img {
+    img.card {
         width: 25%;
         border-radius: 0.6em;
     }

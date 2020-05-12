@@ -34,7 +34,8 @@ const state = {
         { id: 30, src: './assets/cards/q_h.jpg', name: 'qh' },
         { id: 31, src: './assets/cards/k_h.jpg', name: 'kh' },
         { id: 32, src: './assets/cards/a_h.jpg', name: 'ah' }
-    ] as Card[]
+    ] as Card[],
+    score: [0, 0, 0, 0]
 }
 
 export default state
