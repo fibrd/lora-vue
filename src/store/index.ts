@@ -7,5 +7,18 @@ import state from './state'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-    state
+    state,
+    mutations: {
+        UPDATE_SCORE(state, score) {
+            state.score = score
+        }
+    },
+    actions: {
+        updateScore({ state, commit }, score) {
+            const updatedScore = state.score.map(
+                (points, index) => points + score[index]
+            )
+            commit('UPDATE_SCORE', updatedScore)
+        }
+    }
 })
