@@ -50,10 +50,12 @@ img {
 
 .card-wrapper {
     display: flex;
-    max-width: 40em;
+    width: 80%;
+    max-width: 50em;
     margin: 0 auto;
     &:nth-child(2) {
         justify-content: center;
+        align-items: flex-end;
     }
     &:nth-child(3) {
         justify-content: right;
@@ -62,7 +64,7 @@ img {
 
 @media screen and (max-width: 780px) {
     img.card {
-        width: 25%;
+        width: 12.5%;
         border-radius: 0.6em;
     }
 }

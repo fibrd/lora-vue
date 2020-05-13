@@ -1,11 +1,11 @@
 <template>
     <div id="app">
-        <div class="opponents-container">
+        <div class="villains-container">
             <villain-deck :villainCards="villainCards[0]" />
             <villain-deck :villainCards="villainCards[1]" />
             <villain-deck :villainCards="villainCards[2]" />
         </div>
-        <board-card :boardCards="boardCards" />
+        <board-card :boardCards="boardCards" :initPlayer="initPlayer" />
         <hero-deck :heroCards="heroCards" @cardTurned="turn($event)" />
 
         <table>
@@ -51,7 +51,7 @@ export default Vue.extend({
             villainCards: [] as Card[][],
             heroCanAct: true,
             currentScore: [0, 0, 0, 0],
-            currentLoser: 0,
+            initPlayer: 3,
             initCard: {} as Card
         }
     },
@@ -67,9 +67,11 @@ export default Vue.extend({
         },
         initCards(): void {
             const chunkedDeck = this.chunkDeck()
-            this.villainCards[0] = chunkedDeck[0]
-            this.villainCards[1] = chunkedDeck[1]
-            this.villainCards[2] = chunkedDeck[2]
+            this.villainCards = [
+                [...chunkedDeck[0]],
+                [...chunkedDeck[1]],
+                [...chunkedDeck[2]]
+            ]
             this.heroCards = chunkedDeck[3]
         },
         turn(card: Card) {
@@ -77,21 +79,15 @@ export default Vue.extend({
             if (!this.heroCanAct) return
             this.heroCanAct = false
 
-            const boardLen = this.boardCards.length
-
-            // calculating init player based on the count of current board cards
-            const marginIndex = (4 - boardLen) % 4
-            const initPlayer = marginIndex
-
             // checks if hero's reaction is valid
-            if (initPlayer !== 0 && !this.isHeroValid(card)) {
+            if (this.initPlayer !== 3 && !this.isHeroValid(card)) {
                 this.heroCanAct = true
                 return
             }
 
             // checks if hero can play hearts
             if (
-                initPlayer === 0 &&
+                this.initPlayer === 3 &&
                 this.mode === 0 &&
                 !this.canPlayHeart(card)
             ) {
@@ -100,7 +96,7 @@ export default Vue.extend({
             }
 
             // adding selected card to the board
-            this.boardCards.push(card)
+            this.boardCards = [...this.boardCards, card]
 
             //setting up the new init card
             this.initCard = this.boardCards[0]
@@ -109,11 +105,14 @@ export default Vue.extend({
             this.heroCards = this.heroCards.filter(c => c !== card)
 
             // opponents make their reaction turns
-            this.allVillainsReact(boardLen)
+            this.allVillainsReact(this.boardCards.length)
 
             // appointing loser of the current game
-            this.currentLoser = this.appointLoser(initPlayer)
-            this.calculatePoints()
+            const currentLoser = this.appointLoser()
+            this.calculatePoints(currentLoser)
+
+            // setting up the new init player
+            this.initPlayer = currentLoser
 
             setTimeout(() => {
                 // resets data after timeout
@@ -142,21 +141,24 @@ export default Vue.extend({
             )
         },
         allVillainsInit(): void {
-            const index = (4 - this.currentLoser) % 4
-            const villainMaxIndex = this.villainCards.length - 1
+            const villainsCount = this.villainCards.length
+            // calculates villains count to act
+            const villainsToAct = villainsCount - this.initPlayer
 
             // setting initializing opponents to make their moves
-            for (let i = 0; i < index; i++) {
-                this.villainCards[villainMaxIndex - i] = this.villainTurn(
-                    villainMaxIndex - i
+            for (let i = 0; i < villainsToAct; i++) {
+                this.villainCards[villainsCount - 1 - i] = this.villainTurn(
+                    villainsCount - 1 - i
                 )
             }
         },
         allVillainsReact(boardLen: number): void {
-            const index = 3 - boardLen
+            const maxBoardLen = 4
+            // calculates villains count to act
+            const villainsToAct = maxBoardLen - boardLen
 
             // setting rest of opponents to make their reactions
-            for (let i = 0; i < index; i++) {
+            for (let i = 0; i < villainsToAct; i++) {
                 this.villainCards[i] = this.villainTurn(i)
             }
         },
@@ -190,12 +192,15 @@ export default Vue.extend({
             this.boardCards = [...this.boardCards, currentCard]
             return villainCards.filter(c => c !== currentCard)
         },
-        appointLoser(initPlayer: number): number {
-            let currentLoser = initPlayer
+        appointLoser(): number {
+            let currentLoser = this.initPlayer
 
             // resorting actual board according to the initial player
             const sortedBoard = slice(
-                [...takeRight(this.boardCards, initPlayer), ...this.boardCards],
+                [
+                    ...takeRight(this.boardCards, this.initPlayer),
+                    ...this.boardCards
+                ],
                 0,
                 4
             )
@@ -212,19 +217,20 @@ export default Vue.extend({
             })
             return currentLoser
         },
-        calculatePoints(): void {
-            this.currentScore[this.currentLoser] += 1
+        calculatePoints(currentLoser: number): void {
+            this.currentScore[currentLoser] += 1
         },
         nextGame(): void {
             this.$store.dispatch('updateScore', this.currentScore)
             this.currentScore.fill(0)
-            this.currentLoser = 0
+            this.initPlayer = 0
             this.initCard = {} as Card
             this.initCards()
         }
     },
     created() {
         this.initCards()
+        this.allVillainsInit()
     }
 })
 </script>
@@ -249,5 +255,10 @@ export default Vue.extend({
             color: #42b983;
         }
     }
+}
+
+.villains-container {
+    height: 10em;
+    margin-top: 15em;
 }
 </style>
