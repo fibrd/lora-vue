@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <h1 class="current-game">{{ gameMode }}</h1>
         <div class="villains-container">
             <villain-deck :villainCards="playersCards[0]" />
             <villain-deck :villainCards="playersCards[1]" />
@@ -11,18 +12,15 @@
             @cardTurned="heroTurn($event)"
         />
 
-        <table>
-            <tbody>
-                <tr v-for="(score, index) in currentScore" :key="index">
-                    <th>{{ index + 1 }}.</th>
-                    <td>{{ score }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <ol>
+            <li v-for="(score, index) in currentScore" :key="index">
+                {{ score }}
+            </li>
+        </ol>
 
         <div id="nav">
-            <router-link to="/">Home</router-link>|
-            <router-link to="/about">About</router-link>
+            <router-link to="/">Home</router-link> |
+            <router-link to="/results">Results</router-link>
         </div>
         <router-view />
     </div>
@@ -59,7 +57,31 @@ export default Vue.extend({
         }
     },
     computed: {
-        ...mapState(['cards', 'mode'])
+        ...mapState(['cards', 'mode']),
+        gameMode() {
+            let game = ''
+            switch (this.mode) {
+                case 0:
+                    game = 'Červený'
+                    break
+                case 1:
+                    game = 'Filky'
+                    break
+                case 2:
+                    game = 'PrPo'
+                    break
+                case 3:
+                    game = 'Všechny'
+                    break
+                case 4:
+                    game = 'Bedrník'
+                    break
+
+                default:
+                    break
+            }
+            return game
+        }
     },
     methods: {
         shuffleDeck(): Card[] {
@@ -284,6 +306,7 @@ export default Vue.extend({
         },
         nextGame(): void {
             this.$store.dispatch('updateScore', this.currentScore)
+            this.$store.dispatch('nextGame')
             this.currentScore.fill(0)
             this.initPlayer = 3
             this.initCard = {} as Card
@@ -304,6 +327,10 @@ export default Vue.extend({
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+
+    h1 {
+        text-align: left;
+    }
 }
 
 #nav {
@@ -319,8 +346,25 @@ export default Vue.extend({
     }
 }
 
+.card {
+    width: 10%;
+    max-width: 6em;
+}
+
 .villains-container {
     height: 10em;
-    margin-top: 15em;
+    max-width: 80em;
+    margin: 0 auto;
+}
+
+@media screen and (max-width: 780px) {
+    .card {
+        width: 20%;
+    }
+}
+@media screen and (max-width: 360px) {
+    .card {
+        width: 25%;
+    }
 }
 </style>

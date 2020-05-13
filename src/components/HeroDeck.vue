@@ -31,7 +31,7 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .card {
     transition: all 0.2s ease-in;
-    width: 12.5%;
+    margin: 0 0.1em;
     &:hover,
     &:focus {
         cursor: pointer;
@@ -41,17 +41,8 @@ export default Vue.extend({
 
 .card-wrapper {
     max-width: 60em;
-    margin: 4em auto;
-}
-
-@media screen and (max-width: 600px) {
-    .card {
-        width: 20%;
-    }
-}
-@media screen and (max-width: 360px) {
-    .card {
-        width: 25%;
-    }
+    margin: 2em auto;
+    position: relative;
+    top: -4em;
 }
 </style>

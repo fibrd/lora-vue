@@ -1,9 +1,9 @@
 <template>
     <div class="board-wrapper">
-        <img :src="sortedBoard[0].src" class="board-card" />
-        <img :src="sortedBoard[1].src" class="board-card" />
-        <img :src="sortedBoard[2].src" class="board-card" />
-        <img :src="sortedBoard[3].src" class="board-card" />
+        <img :src="sortedBoard[0].src" class="card board-card" />
+        <img :src="sortedBoard[1].src" class="card board-card" />
+        <img :src="sortedBoard[2].src" class="card board-card" />
+        <img :src="sortedBoard[3].src" class="card board-card" />
     </div>
 </template>
 
@@ -35,15 +35,18 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .board-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
-    min-height: 10em;
-    max-width: 30em;
-    margin: 2em auto 10em;
+    min-height: 25em;
+    max-width: 22.5em;
+    margin: 0 auto 6em;
     .board-card {
         width: 25%;
         &:nth-child(2) {
             position: relative;
-            top: -6em;
+            top: -5em;
         }
         &:nth-child(4) {
             position: absolute;
@@ -52,18 +55,20 @@ export default Vue.extend({
         }
     }
 }
-img {
-    width: 10%;
-}
-
-.board-card-wrapper {
-    display: flex;
-}
 
 .fade-enter-active {
     transition: all 0.4s ease;
 }
 .fade-enter {
     opacity: 0;
+}
+
+@media screen and (max-width: 780px) {
+    .board-wrapper {
+        min-height: 20em;
+    }
+    .board-card {
+        width: 20%;
+    }
 }
 </style>

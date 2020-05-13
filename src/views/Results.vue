@@ -1,6 +1,6 @@
 <template>
-    <div class="about">
-        <h1>This is an about page</h1>
+    <div class="results">
+        <h1>Overall Results:</h1>
         <table>
             <tbody>
                 <tr v-for="(points, index) in score" :key="index">

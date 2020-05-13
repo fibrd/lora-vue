@@ -11,6 +11,9 @@ export default new Vuex.Store({
     mutations: {
         UPDATE_SCORE(state, score) {
             state.score = score
+        },
+        NEXT_GAME(state) {
+            state.mode++
         }
     },
     actions: {
@@ -19,6 +22,9 @@ export default new Vuex.Store({
                 (points, index) => points + score[index]
             )
             commit('UPDATE_SCORE', updatedScore)
+        },
+        nextGame({ commit }) {
+            commit('NEXT_GAME')
         }
     }
 })

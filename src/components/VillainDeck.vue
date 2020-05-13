@@ -33,11 +33,10 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-img {
+.card {
     position: absolute;
-    width: 7em;
     border: 1px currentColor solid;
-    border-radius: 1em;
+    border-radius: 0.4em;
     box-shadow: 1px -1px 1px;
 }
 
@@ -50,22 +49,32 @@ img {
 
 .card-wrapper {
     display: flex;
-    width: 80%;
-    max-width: 50em;
-    margin: 0 auto;
-    &:nth-child(2) {
-        justify-content: center;
-        align-items: flex-end;
+    position: relative;
+    justify-content: center;
+    &:nth-child(1) {
+        left: -30%;
+        top: 15em;
     }
     &:nth-child(3) {
-        justify-content: right;
+        left: +30%;
+        top: 15em;
     }
 }
 
 @media screen and (max-width: 780px) {
     img.card {
-        width: 12.5%;
+        width: 15%;
+        min-width: 3em;
         border-radius: 0.6em;
+    }
+
+    .card-wrapper {
+        &:nth-child(1) {
+            top: 5em;
+        }
+        &:nth-child(3) {
+            top: 5em;
+        }
     }
 }
 </style>
