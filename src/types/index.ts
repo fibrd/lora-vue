@@ -5,3 +5,9 @@ export interface Card {
     value: number
     flush: number
 }
+
+export interface BoardCard {
+    playerId: number
+    src: string
+}
+

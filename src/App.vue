@@ -1,12 +1,15 @@
 <template>
     <div id="app">
         <div class="villains-container">
-            <villain-deck :villainCards="villainCards[0]" />
-            <villain-deck :villainCards="villainCards[1]" />
-            <villain-deck :villainCards="villainCards[2]" />
+            <villain-deck :villainCards="playersCards[0]" />
+            <villain-deck :villainCards="playersCards[1]" />
+            <villain-deck :villainCards="playersCards[2]" />
         </div>
         <board-card :boardCards="boardCards" :initPlayer="initPlayer" />
-        <hero-deck :heroCards="heroCards" @cardTurned="turn($event)" />
+        <hero-deck
+            :heroCards="playersCards[3]"
+            @cardTurned="heroTurn($event)"
+        />
 
         <table>
             <tbody>
@@ -28,6 +31,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Card } from '@/types'
+import { hearts, any, queens } from '@/modes/'
 import { mapState } from 'vuex'
 
 // components
@@ -47,8 +51,7 @@ export default Vue.extend({
     data() {
         return {
             boardCards: [] as Card[],
-            heroCards: [] as Card[],
-            villainCards: [] as Card[][],
+            playersCards: [] as Card[][],
             heroCanAct: true,
             currentScore: [0, 0, 0, 0],
             initPlayer: 3,
@@ -67,30 +70,19 @@ export default Vue.extend({
         },
         initCards(): void {
             const chunkedDeck = this.chunkDeck()
-            this.villainCards = [
+            this.playersCards = [
                 [...chunkedDeck[0]],
                 [...chunkedDeck[1]],
-                [...chunkedDeck[2]]
+                [...chunkedDeck[2]],
+                [...chunkedDeck[3]]
             ]
-            this.heroCards = chunkedDeck[3]
         },
-        turn(card: Card) {
+        heroTurn(card: Card) {
             // reaction timeout is set up
             if (!this.heroCanAct) return
             this.heroCanAct = false
 
-            // checks if hero's reaction is valid
-            if (this.initPlayer !== 3 && !this.isHeroValid(card)) {
-                this.heroCanAct = true
-                return
-            }
-
-            // checks if hero can play hearts
-            if (
-                this.initPlayer === 3 &&
-                this.mode === 0 &&
-                !this.canPlayHeart(card)
-            ) {
+            if (!this.validateCard(card)) {
                 this.heroCanAct = true
                 return
             }
@@ -102,7 +94,7 @@ export default Vue.extend({
             this.initCard = this.boardCards[0]
 
             // deletes selected card out of hero's deck
-            this.heroCards = this.heroCards.filter(c => c !== card)
+            this.playersCards[3] = this.playersCards[3].filter(c => c !== card)
 
             // opponents make their reaction turns
             this.allVillainsReact(this.boardCards.length)
@@ -111,29 +103,47 @@ export default Vue.extend({
             const currentLoser = this.appointLoser()
             this.calculatePoints(currentLoser)
 
-            // setting up the new init player
-            this.initPlayer = currentLoser
-
             setTimeout(() => {
+                // setting up the new init player
+                this.initPlayer = currentLoser
+
                 // resets data after timeout
                 this.heroCanAct = true
                 this.boardCards = []
 
                 // initializes opponents turn only if hero has cards
-                if (this.heroCards.length) {
+                if (this.playersCards[3].length) {
                     this.allVillainsInit()
                 } else {
                     this.nextGame()
                 }
             }, 2000)
         },
-        canPlayHeart(card: Card): boolean {
-            const anyHeartCard = this.heroCards.find(c => c.flush === 3)
-            return card.flush !== 3 || anyHeartCard === undefined
+        validateCard(card: Card): boolean {
+            // checks if hero is turning the valid flush
+            if (this.initPlayer !== 3 && !this.isFlushValid(card)) {
+                return false
+            }
+
+            switch (this.mode) {
+                // hearts
+                case 0:
+                    if (
+                        this.initPlayer === 3 &&
+                        !hearts.canInitHeart(card, this.playersCards[3])
+                    )
+                        return false
+                    break
+
+                default:
+                    break
+            }
+
+            return true
         },
-        isHeroValid(card: Card): boolean {
+        isFlushValid(card: Card): boolean {
             // finds any hero's card with flush equals to the initializing one
-            const anyFlushCard = this.heroCards.find(
+            const anyFlushCard = this.playersCards[3].find(
                 c => c.flush === this.initCard.flush
             )
             return (
@@ -141,13 +151,13 @@ export default Vue.extend({
             )
         },
         allVillainsInit(): void {
-            const villainsCount = this.villainCards.length
+            const villainsCount = 3
             // calculates villains count to act
             const villainsToAct = villainsCount - this.initPlayer
 
             // setting initializing opponents to make their moves
             for (let i = 0; i < villainsToAct; i++) {
-                this.villainCards[villainsCount - 1 - i] = this.villainTurn(
+                this.playersCards[villainsCount - 1 - i] = this.villainTurn(
                     villainsCount - 1 - i
                 )
             }
@@ -159,38 +169,68 @@ export default Vue.extend({
 
             // setting rest of opponents to make their reactions
             for (let i = 0; i < villainsToAct; i++) {
-                this.villainCards[i] = this.villainTurn(i)
+                this.playersCards[i] = this.villainTurn(i)
             }
         },
         villainTurn(villain: number): Card[] {
-            const villainCards = this.villainCards[villain]
-            const sortedDeck = sortBy(villainCards, ['value'])
+            const playerCards = this.playersCards[villain]
+            const sortedDeck = sortBy(playerCards, ['value'])
 
             // current turn is initializing
             if (this.boardCards.length === 0) {
-                const currentCard = sortedDeck[0]
+                let currentCard = {} as Card
+                switch (this.mode) {
+                    case 0:
+                        currentCard = hearts.villainInitCard(sortedDeck)
+                        break
+
+                    case 1:
+                        currentCard = queens.villainInitCard(sortedDeck)
+                        break
+
+                    default:
+                        currentCard = any.villainInitCard(sortedDeck)
+                        break
+                }
                 this.initCard = currentCard
                 this.boardCards = [currentCard]
-                return villainCards.filter(c => c !== currentCard)
+                return playerCards.filter(c => c !== currentCard)
             }
 
             // filtering players cards w/ the same flush
-            const eligeableCards = villainCards.filter(
+            const eligeableCards = playerCards.filter(
                 c => c.flush === this.initCard.flush
             ) as Card[]
 
-            // if filtered cards add any lower one than the init card
-            // otherwise adds a card w/ the biggest value
-            let currentCard = eligeableCards.length
-                ? eligeableCards.find(c => c.value < this.initCard.value)
-                : sortedDeck[sortedDeck.length - 1]
+            let currentCard = {} as Card
+            switch (this.mode) {
+                case 0:
+                    currentCard = hearts.villainReactCard(
+                        playerCards,
+                        eligeableCards,
+                        this.initCard
+                    )
+                    break
+                case 1:
+                    currentCard = queens.villainReactCard(
+                        sortedDeck,
+                        eligeableCards,
+                        this.initCard
+                    )
+                    break
 
-            // if there are some filtered cards with no lower value but the bigger one
-            if (!currentCard) currentCard = eligeableCards[0]
+                default:
+                    currentCard = any.villainReactCard(
+                        sortedDeck,
+                        eligeableCards,
+                        this.initCard
+                    )
+                    break
+            }
 
             // immutable array push
             this.boardCards = [...this.boardCards, currentCard]
-            return villainCards.filter(c => c !== currentCard)
+            return playerCards.filter(c => c !== currentCard)
         },
         appointLoser(): number {
             let currentLoser = this.initPlayer
@@ -218,12 +258,25 @@ export default Vue.extend({
             return currentLoser
         },
         calculatePoints(currentLoser: number): void {
-            this.currentScore[currentLoser] += 1
+            let score = 0
+            switch (this.mode) {
+                case 0:
+                    score = hearts.score(this.boardCards)
+                    break
+                case 1:
+                    score = queens.score(this.boardCards)
+                    break
+
+                default:
+                    score = 1
+                    break
+            }
+            this.currentScore[currentLoser] += score
         },
         nextGame(): void {
             this.$store.dispatch('updateScore', this.currentScore)
             this.currentScore.fill(0)
-            this.initPlayer = 0
+            this.initPlayer = 3
             this.initCard = {} as Card
             this.initCards()
         }

@@ -1,27 +1,15 @@
 <template>
-    <transition-group tag="div" name="fade" class="board" mode="out-in" appear>
-        <img
-            v-for="card in boardCards"
-            :key="card.id"
-            :src="card.src"
-            alt="actual card"
-        />
-    </transition-group>
-    <!-- <div class="board-wrapper">
-        <img :src="boardCards[0].src" alt="board card 1" class="board-card" />
-
-        <img :src="boardCards[1].src" alt="board card 2" class="board-card" />
-
-        <img :src="boardCards[2].src" alt="board card 3" class="board-card" />
-
-        <img :src="boardCards[3].src" alt="board card 4" class="board-card" />
-    </div> -->
+    <div class="board-wrapper">
+        <img :src="sortedBoard[0].src" class="board-card" />
+        <img :src="sortedBoard[1].src" class="board-card" />
+        <img :src="sortedBoard[2].src" class="board-card" />
+        <img :src="sortedBoard[3].src" class="board-card" />
+    </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Card } from '@/types'
-import { sortBy } from 'lodash-es'
+import { Card, BoardCard } from '@/types'
 
 export default Vue.extend({
     props: {
@@ -29,20 +17,17 @@ export default Vue.extend({
         initPlayer: Number
     },
     computed: {
-        // resorting actual board according to the initial player
         sortedBoard() {
-            // let sortedBoard = this.boardCards
-            // for (let i = 0; i < 4; i++) {
-            //     const element = array[i];
+            const sortedBoard = [] as BoardCard[]
 
-            // }
-            let sortedBoard = [] as {}[]
-            sortedBoard.fill({}, 0, 4)
-            sortedBoard = this.boardCards.map((card, index) => {
-                const marginIndex = (4 - index) % 4
-                return { src: card.src, sortId: marginIndex }
-            })
-            return sortBy(sortedBoard, ['sortId'])
+            // resorting actual board according to the initial player
+            for (let i = 0; i < 4; i++) {
+                const sortIndex = (i + this.initPlayer) % 4
+                sortedBoard[sortIndex] = this.boardCards[i]
+                    ? { playerId: i, src: this.boardCards[i].src }
+                    : { playerId: -1, src: '' }
+            }
+            return sortedBoard
         }
     }
 })
