@@ -31,7 +31,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Card } from '@/types'
-import { hearts, any, queens } from '@/modes/'
+import { hearts, queens, fila, any, king } from '@/modes/'
 import { mapState } from 'vuex'
 
 // components
@@ -134,11 +134,14 @@ export default Vue.extend({
                     )
                         return false
                     break
-
-                default:
+                case 4:
+                    if (
+                        this.initPlayer === 3 &&
+                        !king.canInitHeart(card, this.playersCards[3])
+                    )
+                        return false
                     break
             }
-
             return true
         },
         isFlushValid(card: Card): boolean {
@@ -265,6 +268,12 @@ export default Vue.extend({
                     break
                 case 1:
                     score = queens.score(this.boardCards)
+                    break
+                case 2:
+                    score = fila.score(this.playersCards[3].length)
+                    break
+                case 4:
+                    score = king.score(this.boardCards)
                     break
 
                 default:
