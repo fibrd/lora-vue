@@ -227,7 +227,7 @@ const state = {
             flush: 3
         }
     ] as Card[],
-    mode: 5,
+    mode: 0,
     timeOut: 2000,
     score: [0, 0, 0, 0]
 }
