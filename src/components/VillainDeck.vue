@@ -41,9 +41,9 @@ export default Vue.extend({
 }
 
 @for $i from 1 through 8 {
-    img:nth-child(#{$i}) {
+    .card:nth-child(#{$i}) {
         transform-origin: 50% 120%;
-        transform: rotateZ($i * 5deg - 20deg);
+        transform: rotateZ($i * 3deg - 12deg);
     }
 }
 
@@ -62,9 +62,10 @@ export default Vue.extend({
 }
 
 @media screen and (max-width: 780px) {
-    img.card {
-        width: 15%;
-        min-width: 3em;
+    .card {
+        width: 14%;
+        min-width: 4em;
+        max-width: 5em;
         border-radius: 0.6em;
     }
 
@@ -75,6 +76,12 @@ export default Vue.extend({
         &:nth-child(3) {
             top: 5em;
         }
+    }
+}
+@media screen and (max-width: 460px) {
+    .card {
+        width: 15%;
+        min-width: 3em;
     }
 }
 </style>

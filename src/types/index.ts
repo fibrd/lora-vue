@@ -7,7 +7,5 @@ export interface Card {
 }
 
 export interface BoardCard {
-    playerId: number
     src: string
 }
-

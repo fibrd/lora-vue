@@ -12,6 +12,7 @@
             @cardTurned="heroTurn($event)"
         />
 
+        <h4>Current Game Results:</h4>
         <ol>
             <li v-for="(score, index) in currentScore" :key="index">
                 {{ score }}
@@ -328,6 +329,8 @@ export default Vue.extend({
     text-align: center;
     color: #2c3e50;
 
+    overflow: hidden;
+
     h1 {
         text-align: left;
     }
@@ -353,7 +356,7 @@ export default Vue.extend({
 
 .villains-container {
     height: 10em;
-    max-width: 80em;
+    max-width: 60em;
     margin: 0 auto;
 }
 
@@ -362,9 +365,9 @@ export default Vue.extend({
         width: 20%;
     }
 }
-@media screen and (max-width: 360px) {
+@media screen and (max-width: 460px) {
     .card {
-        width: 25%;
+        width: 20%;
     }
 }
 </style>

@@ -4,7 +4,7 @@
         <table>
             <tbody>
                 <tr v-for="(points, index) in score" :key="index">
-                    <th>{{ index + 1 }}.</th>
+                    <th>Player{{ index + 1 }}:</th>
                     <td>{{ points }}</td>
                 </tr>
             </tbody>

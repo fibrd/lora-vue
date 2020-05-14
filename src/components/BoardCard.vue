@@ -1,9 +1,12 @@
 <template>
     <div class="board-wrapper">
-        <img :src="sortedBoard[0].src" class="card board-card" />
-        <img :src="sortedBoard[1].src" class="card board-card" />
-        <img :src="sortedBoard[2].src" class="card board-card" />
-        <img :src="sortedBoard[3].src" class="card board-card" />
+        <img
+            v-for="(boardCard, index) in sortedBoard"
+            :key="index"
+            :src="boardCard.src"
+            :class="{ blank: isBlank(boardCard.src) }"
+            class="card board-card"
+        />
     </div>
 </template>
 
@@ -16,6 +19,11 @@ export default Vue.extend({
         boardCards: Array as () => Card[],
         initPlayer: Number
     },
+    data() {
+        return {
+            srcBlank: './assets/cards/blank.jpg'
+        }
+    },
     computed: {
         sortedBoard() {
             const sortedBoard = [] as BoardCard[]
@@ -24,10 +32,15 @@ export default Vue.extend({
             for (let i = 0; i < 4; i++) {
                 const sortIndex = (i + this.initPlayer) % 4
                 sortedBoard[sortIndex] = this.boardCards[i]
-                    ? { playerId: i, src: this.boardCards[i].src }
-                    : { playerId: -1, src: '' }
+                    ? { src: this.boardCards[i].src }
+                    : { src: this.srcBlank }
             }
             return sortedBoard
+        }
+    },
+    methods: {
+        isBlank(src: string): boolean {
+            return src === this.srcBlank
         }
     }
 })
@@ -42,18 +55,22 @@ export default Vue.extend({
     min-height: 25em;
     max-width: 22.5em;
     margin: 0 auto 6em;
-    .board-card {
-        width: 25%;
-        &:nth-child(2) {
-            position: relative;
-            top: -5em;
-        }
-        &:nth-child(4) {
-            position: absolute;
-            left: 50%-25%/2;
-            top: 50%;
-        }
+}
+.board-card {
+    width: 25%;
+    &:nth-child(2) {
+        position: relative;
+        top: -5em;
     }
+    &:nth-child(4) {
+        position: absolute;
+        left: 50%-25%/2;
+        top: 50%;
+    }
+}
+
+.blank {
+    opacity: 0;
 }
 
 .fade-enter-active {
@@ -68,7 +85,24 @@ export default Vue.extend({
         min-height: 20em;
     }
     .board-card {
+        width: 22%;
+        &:nth-child(4) {
+            left: 50%-22%/2;
+            top: 45%;
+        }
+    }
+}
+@media screen and (max-width: 460px) {
+    .board-wrapper {
+        min-height: 14em;
+        margin-bottom: 6em;
+    }
+    .board-card {
         width: 20%;
+        &:nth-child(4) {
+            left: 50%-20%/2;
+            top: 45%;
+        }
     }
 }
 </style>
