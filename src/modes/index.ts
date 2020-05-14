@@ -1,4 +1,5 @@
 import { Card } from '@/types'
+import store from '@/store'
 
 /**
  * GAME MODE HEARTS
@@ -166,4 +167,13 @@ export const king = {
         if (!currentCard) currentCard = eligeableCards[0]
         return currentCard
     }
+}
+
+/**
+ * GAME MODE TENS
+ */
+export const tens = {
+    initCards: store.state.cards.map(c => {
+        return { ...c, src: './assets/cards/blank.jpg' }
+    }) as Card[]
 }

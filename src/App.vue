@@ -16,10 +16,12 @@
             />
         </div>
         <board-card
+            v-if="mode !== 5"
             :currentLoser="currentLoser"
             :boardCards="boardCards"
             :initPlayer="initPlayer"
         />
+        <tens-board v-else />
         <hero-deck
             :heroCards="playersCards[3]"
             @cardTurned="heroTurn($event)"
@@ -50,6 +52,7 @@ import { mapState } from 'vuex'
 import HeroDeck from '@/components/HeroDeck.vue'
 import VillainDeck from '@/components/VillainDeck.vue'
 import BoardCard from '@/components/BoardCard.vue'
+import TensBoard from '@/components/TensBoard.vue'
 
 // lodash helpers
 import { shuffle, chunk, sortBy, takeRight, slice } from 'lodash-es'
@@ -58,7 +61,8 @@ export default Vue.extend({
     components: {
         HeroDeck,
         VillainDeck,
-        BoardCard
+        BoardCard,
+        TensBoard
     },
     data() {
         return {
@@ -67,7 +71,7 @@ export default Vue.extend({
             heroCanAct: true,
             currentScore: [0, 0, 0, 0],
             initPlayer: 3,
-            currentLoser: 0,
+            currentLoser: -1,
             initCard: {} as Card
         }
     },
@@ -143,6 +147,7 @@ export default Vue.extend({
             setTimeout(() => {
                 // setting up the new init player
                 this.initPlayer = this.currentLoser
+                this.currentLoser = -1
 
                 // resets data after timeout
                 this.heroCanAct = true

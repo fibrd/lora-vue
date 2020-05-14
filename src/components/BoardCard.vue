@@ -3,7 +3,6 @@
         <img
             v-for="(boardCard, index) in sortedBoard"
             :key="boardCard.src + index"
-            v-cloak
             :src="boardCard.src"
             :class="{
                 blank: isBlank(boardCard.src),
