@@ -1,13 +1,14 @@
 <template>
-    <div class="card-wrapper">
+    <transition-group name="turned" class="card-wrapper">
         <img
             v-for="n in sortedCards.length"
             :key="n"
             :src="cardBackSrc"
             alt="back"
+            :class="{ highlighted: highlighted }"
             class="card"
         />
-    </div>
+    </transition-group>
 </template>
 
 <script lang="ts">
@@ -17,7 +18,8 @@ import { sortBy } from 'lodash-es'
 
 export default Vue.extend({
     props: {
-        villainCards: Array as () => Card[]
+        villainCards: Array as () => Card[],
+        highlighted: Boolean
     },
     data() {
         return {
@@ -37,7 +39,10 @@ export default Vue.extend({
     position: absolute;
     border: 1px currentColor solid;
     border-radius: 0.4em;
-    box-shadow: 1px -1px 1px;
+}
+
+.highlighted {
+    box-shadow: 0px 0px 4px 4px rgba(37, 114, 1, 0.4);
 }
 
 @for $i from 1 through 8 {
@@ -59,6 +64,16 @@ export default Vue.extend({
         left: +30%;
         top: 15em;
     }
+}
+
+.turned-enter-active,
+.turned-leave-active {
+    transition: opacity 0.4s ease;
+}
+
+.turned-enter,
+.turned-leave-to {
+    opacity: 0;
 }
 
 @media screen and (max-width: 780px) {

@@ -2,9 +2,13 @@
     <div class="board-wrapper">
         <img
             v-for="(boardCard, index) in sortedBoard"
-            :key="index"
+            :key="boardCard.src + index"
+            v-cloak
             :src="boardCard.src"
-            :class="{ blank: isBlank(boardCard.src) }"
+            :class="{
+                blank: isBlank(boardCard.src),
+                highlighted: currentLoser === boardCard.sortId
+            }"
             class="card board-card"
         />
     </div>
@@ -17,7 +21,8 @@ import { Card, BoardCard } from '@/types'
 export default Vue.extend({
     props: {
         boardCards: Array as () => Card[],
-        initPlayer: Number
+        initPlayer: Number,
+        currentLoser: Number
     },
     data() {
         return {
@@ -32,8 +37,8 @@ export default Vue.extend({
             for (let i = 0; i < 4; i++) {
                 const sortIndex = (i + this.initPlayer) % 4
                 sortedBoard[sortIndex] = this.boardCards[i]
-                    ? { src: this.boardCards[i].src }
-                    : { src: this.srcBlank }
+                    ? { src: this.boardCards[i].src, sortId: sortIndex }
+                    : { src: this.srcBlank, sortId: sortIndex }
             }
             return sortedBoard
         }
@@ -52,20 +57,30 @@ export default Vue.extend({
     align-items: center;
     justify-content: center;
     position: relative;
-    min-height: 25em;
+    min-height: 22.5em;
     max-width: 22.5em;
-    margin: 0 auto 6em;
+    margin: 2em auto 6em;
 }
 .board-card {
-    width: 25%;
+    width: 6em;
+    margin: 0.5em;
+    &:nth-child(1) {
+        display: flex;
+        align-self: center;
+    }
     &:nth-child(2) {
-        position: relative;
-        top: -5em;
+        display: flex;
+        align-self: flex-start;
+    }
+    &:nth-child(3) {
+        display: flex;
+        align-self: center;
     }
     &:nth-child(4) {
+        display: flex;
+        align-self: flex-end;
         position: absolute;
-        left: 50%-25%/2;
-        top: 50%;
+        left: 22.5/2 - (2 * 0.5 +6) em / 2em;
     }
 }
 
@@ -73,35 +88,40 @@ export default Vue.extend({
     opacity: 0;
 }
 
-.fade-enter-active {
-    transition: all 0.4s ease;
+.highlighted {
+    box-shadow: 0px 0px 4px 4px rgba(138, 7, 7, 0.6);
+    z-index: 10;
 }
-.fade-enter {
+
+.boarded-enter {
     opacity: 0;
+}
+
+.boarded-enter-active {
+    transition: opacity 1s ease-in;
 }
 
 @media screen and (max-width: 780px) {
     .board-wrapper {
         min-height: 20em;
+        margin-top: 0;
     }
     .board-card {
-        width: 22%;
+        width: 5em;
         &:nth-child(4) {
-            left: 50%-22%/2;
-            top: 45%;
+            left: 22.5/2 - (2 * 0.5 +5) em / 2em;
         }
     }
 }
 @media screen and (max-width: 460px) {
     .board-wrapper {
-        min-height: 14em;
+        min-height: 15em;
         margin-bottom: 6em;
     }
     .board-card {
-        width: 20%;
+        width: 4em;
         &:nth-child(4) {
-            left: 50%-20%/2;
-            top: 45%;
+            left: 22.5/2 - (2 * 0.5 +4) em / 2em;
         }
     }
 }

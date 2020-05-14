@@ -2,11 +2,24 @@
     <div id="app">
         <h1 class="current-game">{{ gameMode }}</h1>
         <div class="villains-container">
-            <villain-deck :villainCards="playersCards[0]" />
-            <villain-deck :villainCards="playersCards[1]" />
-            <villain-deck :villainCards="playersCards[2]" />
+            <villain-deck
+                :highlighted="initPlayer === 0"
+                :villainCards="playersCards[0]"
+            />
+            <villain-deck
+                :highlighted="initPlayer === 1"
+                :villainCards="playersCards[1]"
+            />
+            <villain-deck
+                :highlighted="initPlayer === 2"
+                :villainCards="playersCards[2]"
+            />
         </div>
-        <board-card :boardCards="boardCards" :initPlayer="initPlayer" />
+        <board-card
+            :currentLoser="currentLoser"
+            :boardCards="boardCards"
+            :initPlayer="initPlayer"
+        />
         <hero-deck
             :heroCards="playersCards[3]"
             @cardTurned="heroTurn($event)"
@@ -54,11 +67,12 @@ export default Vue.extend({
             heroCanAct: true,
             currentScore: [0, 0, 0, 0],
             initPlayer: 3,
+            currentLoser: 0,
             initCard: {} as Card
         }
     },
     computed: {
-        ...mapState(['cards', 'mode']),
+        ...mapState(['cards', 'mode', 'timeOut']),
         gameMode() {
             let game = ''
             switch (this.mode) {
@@ -123,24 +137,27 @@ export default Vue.extend({
             this.allVillainsReact(this.boardCards.length)
 
             // appointing loser of the current game
-            const currentLoser = this.appointLoser()
-            this.calculatePoints(currentLoser)
+            this.currentLoser = this.appointLoser()
+            this.calculatePoints()
 
             setTimeout(() => {
                 // setting up the new init player
-                this.initPlayer = currentLoser
+                this.initPlayer = this.currentLoser
 
                 // resets data after timeout
                 this.heroCanAct = true
                 this.boardCards = []
 
                 // initializes opponents turn only if hero has cards
-                if (this.playersCards[3].length) {
+                if (
+                    this.playersCards[3].length &&
+                    this.currentScore.reduce((score, sum) => sum + score) !== 8
+                ) {
                     this.allVillainsInit()
                 } else {
                     this.nextGame()
                 }
-            }, 2000)
+            }, this.timeOut)
         },
         validateCard(card: Card): boolean {
             // checks if hero is turning the valid flush
@@ -209,9 +226,11 @@ export default Vue.extend({
                     case 0:
                         currentCard = hearts.villainInitCard(sortedDeck)
                         break
-
                     case 1:
                         currentCard = queens.villainInitCard(sortedDeck)
+                        break
+                    case 4:
+                        currentCard = king.villainInitCard(sortedDeck)
                         break
 
                     default:
@@ -239,6 +258,13 @@ export default Vue.extend({
                     break
                 case 1:
                     currentCard = queens.villainReactCard(
+                        sortedDeck,
+                        eligeableCards,
+                        this.initCard
+                    )
+                    break
+                case 4:
+                    currentCard = king.villainReactCard(
                         sortedDeck,
                         eligeableCards,
                         this.initCard
@@ -283,7 +309,7 @@ export default Vue.extend({
             })
             return currentLoser
         },
-        calculatePoints(currentLoser: number): void {
+        calculatePoints(): void {
             let score = 0
             switch (this.mode) {
                 case 0:
@@ -303,7 +329,7 @@ export default Vue.extend({
                     score = 1
                     break
             }
-            this.currentScore[currentLoser] += score
+            this.currentScore[this.currentLoser] += score
         },
         nextGame(): void {
             this.$store.dispatch('updateScore', this.currentScore)
@@ -322,6 +348,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+[v-cloak] {
+    display: none;
+}
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

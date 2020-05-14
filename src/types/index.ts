@@ -8,4 +8,5 @@ export interface Card {
 
 export interface BoardCard {
     src: string
+    sortId: number
 }

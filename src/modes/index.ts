@@ -143,7 +143,8 @@ export const king = {
 
     // returns villains init card to turn
     villainInitCard(sortedDeck: Card[]): Card {
-        return sortedDeck[0]
+        const anyNotHearts = sortedDeck.filter(card => card.flush !== 3)
+        return anyNotHearts.length ? anyNotHearts[0] : sortedDeck[0]
     },
 
     // if filtered cards turns any lower one than the init card
@@ -153,6 +154,10 @@ export const king = {
         eligeableCards: Card[],
         initCard: Card
     ): Card {
+        sortedDeck =
+            sortedDeck.length === 8
+                ? sortedDeck.filter(c => c.id !== 31)
+                : sortedDeck
         let currentCard = eligeableCards.length
             ? eligeableCards.find(c => c.value < initCard.value)
             : sortedDeck[sortedDeck.length - 1]

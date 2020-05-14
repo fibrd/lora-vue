@@ -228,6 +228,7 @@ const state = {
         }
     ] as Card[],
     mode: 0,
+    timeOut: 2000,
     score: [0, 0, 0, 0]
 }
 

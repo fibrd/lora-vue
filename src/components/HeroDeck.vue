@@ -1,5 +1,5 @@
 <template>
-    <div class="card-wrapper">
+    <transition-group name="turned" class="card-wrapper">
         <img
             v-for="card in sortedCards"
             :key="card.id"
@@ -8,7 +8,7 @@
             :alt="card.name"
             @click="$emit('cardTurned', card)"
         />
-    </div>
+    </transition-group>
 </template>
 
 <script lang="ts">
@@ -44,5 +44,15 @@ export default Vue.extend({
     margin: 2em auto;
     position: relative;
     top: -4em;
+}
+
+.turned-enter-active,
+.turned-leave-active {
+    transition: opacity 0.4s ease;
+}
+
+.turned-enter,
+.turned-leave-to {
+    opacity: 0;
 }
 </style>
