@@ -1,14 +1,16 @@
 <template>
-    <transition-group name="turned" class="card-wrapper">
-        <img
-            v-for="card in sortedCards"
-            :key="card.id"
-            class="card"
-            :src="card.src"
-            :alt="card.name"
-            @click="$emit('cardTurned', card)"
-        />
-    </transition-group>
+    <div class="hero-wrapper">
+        <transition-group name="turned" class="card-wrapper">
+            <img
+                v-for="card in sortedCards"
+                :key="card.id"
+                class="card"
+                :src="card.src"
+                :alt="card.name"
+                @click="$emit('cardTurned', card)"
+            />
+        </transition-group>
+    </div>
 </template>
 
 <script lang="ts">

@@ -1,25 +1,30 @@
 <template>
-    <transition-group name="turned" class="card-wrapper">
+    <div class="card-wrapper">
+        <h4 class="player-name">
+            {{ villainsNames[villain] }}
+        </h4>
+
         <img
-            v-for="n in sortedCards.length"
+            v-for="n in villainCards.length"
             :key="n"
             :src="cardBackSrc"
             alt="back"
             :class="{ highlighted: highlighted }"
             class="card"
         />
-    </transition-group>
+    </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapState } from 'vuex'
 import { Card } from '@/types'
-import { sortBy } from 'lodash-es'
 
 export default Vue.extend({
     props: {
         villainCards: Array as () => Card[],
-        highlighted: Boolean
+        highlighted: Boolean,
+        villain: Number
     },
     data() {
         return {
@@ -27,9 +32,7 @@ export default Vue.extend({
         }
     },
     computed: {
-        sortedCards(): Card[] {
-            return sortBy(this.villainCards, ['id'])
-        }
+        ...mapState(['villainsNames'])
     }
 })
 </script>
@@ -39,6 +42,11 @@ export default Vue.extend({
     position: absolute;
     border: 1px currentColor solid;
     border-radius: 0.4em;
+}
+.player-name {
+    position: absolute;
+    top: -3.5em;
+    z-index: 25;
 }
 
 .highlighted {
@@ -57,11 +65,11 @@ export default Vue.extend({
     position: relative;
     justify-content: center;
     &:nth-child(1) {
-        left: -30%;
+        justify-content: left;
         top: 15em;
     }
     &:nth-child(3) {
-        left: +30%;
+        justify-content: right;
         top: 15em;
     }
 }

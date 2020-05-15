@@ -6,6 +6,7 @@
                 :key="card.id"
                 :src="card.src"
                 :alt="card.id"
+                :class="{ blank: card.src === blankSrc }"
                 class="card"
             />
         </div>
@@ -15,6 +16,7 @@
                 :key="card.id"
                 :src="card.src"
                 :alt="card.id"
+                :class="{ blank: card.src === blankSrc }"
                 class="card"
             />
         </div>
@@ -24,6 +26,7 @@
                 :key="card.id"
                 :src="card.src"
                 :alt="card.id"
+                :class="{ blank: card.src === blankSrc }"
                 class="card"
             />
         </div>
@@ -33,6 +36,7 @@
                 :key="card.id"
                 :src="card.src"
                 :alt="card.id"
+                :class="{ blank: card.src === blankSrc }"
                 class="card"
             />
         </div>
@@ -45,27 +49,50 @@ import { Card } from '@/types'
 import { tens } from '@/modes'
 
 export default Vue.extend({
+    props: {
+        playedCards: Array as () => Card[]
+    },
     data() {
         return {
-            initCards: [] as Card[]
+            cards: [] as Card[],
+            blankSrc: './assets/cards/blank.jpg'
         }
     },
     computed: {
+        cardsPlayer(): Card[] {
+            return this.playedCards
+        },
         clubsPlayed(): Card[] {
-            return this.initCards.filter(card => card.flush === 0)
+            return this.filterFlush(this.cards, 0)
         },
         spadesPlayed(): Card[] {
-            return this.initCards.filter(card => card.flush === 1)
+            return this.filterFlush(this.cards, 1)
         },
         diamondsPlayed(): Card[] {
-            return this.initCards.filter(card => card.flush === 2)
+            return this.filterFlush(this.cards, 2)
         },
         heartsPlayed(): Card[] {
-            return this.initCards.filter(card => card.flush === 3)
+            return this.filterFlush(this.cards, 3)
+        }
+    },
+    methods: {
+        filterFlush(cards: Card[], flush: number): Card[] {
+            return cards.filter(card => card.flush === flush)
+        }
+    },
+    watch: {
+        playedCards(cardsPlayed: Card[]) {
+            let newCards = this.cards
+            cardsPlayed.forEach(newCard => {
+                newCards = newCards.map(card => {
+                    return card.id === newCard.id ? newCard : card
+                })
+            })
+            this.cards = newCards
         }
     },
     created() {
-        this.initCards = tens.initCards
+        this.cards = tens.initCards
     }
 })
 </script>
@@ -85,6 +112,10 @@ export default Vue.extend({
 .card {
     position: relative;
     width: 5em;
+}
+
+.blank {
+    opacity: 0;
 }
 
 @for $i from 1 through 8 {

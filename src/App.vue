@@ -1,42 +1,33 @@
 <template>
     <div id="app">
         <h1 class="current-game">{{ gameMode }}</h1>
+        <table-score :currentScore="currentScore" />
         <div class="villains-container">
             <villain-deck
-                :highlighted="initPlayer === 0"
-                :villainCards="playersCards[0]"
-            />
-            <villain-deck
-                :highlighted="initPlayer === 1"
-                :villainCards="playersCards[1]"
-            />
-            <villain-deck
-                :highlighted="initPlayer === 2"
-                :villainCards="playersCards[2]"
+                v-for="index in 3"
+                :key="index"
+                :highlighted="initPlayer === index - 1"
+                :villainCards="playersCards[index - 1]"
+                :villain="index - 1"
             />
         </div>
         <board-card
-            v-if="mode !== 5"
+            v-if="mode !== 6"
             :currentLoser="currentLoser"
             :boardCards="boardCards"
             :initPlayer="initPlayer"
         />
-        <tens-board v-else />
+        <tens-board v-else :playedCards="alreadyPlayedCards" />
         <hero-deck
             :heroCards="playersCards[3]"
             @cardTurned="heroTurn($event)"
+            @giveUp="giveUp"
         />
-
-        <h4>Current Game Results:</h4>
-        <ol>
-            <li v-for="(score, index) in currentScore" :key="index">
-                {{ score }}
-            </li>
-        </ol>
+        <button v-on:click="giveUp">Give up</button>
 
         <div id="nav">
             <router-link to="/">Home</router-link> |
-            <router-link to="/results">Results</router-link>
+            <router-link to="/level">Level</router-link>
         </div>
         <router-view />
     </div>
@@ -45,7 +36,16 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Card } from '@/types'
-import { hearts, queens, fila, any, king } from '@/modes/'
+import {
+    gameModes,
+    hearts,
+    queens,
+    fila,
+    any,
+    king,
+    tens,
+    playerNames
+} from '@/modes/'
 import { mapState } from 'vuex'
 
 // components
@@ -53,6 +53,7 @@ import HeroDeck from '@/components/HeroDeck.vue'
 import VillainDeck from '@/components/VillainDeck.vue'
 import BoardCard from '@/components/BoardCard.vue'
 import TensBoard from '@/components/TensBoard.vue'
+import TableScore from '@/components/TableScore.vue'
 
 // lodash helpers
 import { shuffle, chunk, sortBy, takeRight, slice } from 'lodash-es'
@@ -62,12 +63,14 @@ export default Vue.extend({
         HeroDeck,
         VillainDeck,
         BoardCard,
-        TensBoard
+        TensBoard,
+        TableScore
     },
     data() {
         return {
             boardCards: [] as Card[],
             playersCards: [] as Card[][],
+            alreadyPlayedCards: [] as Card[],
             heroCanAct: true,
             currentScore: [0, 0, 0, 0],
             initPlayer: 3,
@@ -78,28 +81,7 @@ export default Vue.extend({
     computed: {
         ...mapState(['cards', 'mode', 'timeOut']),
         gameMode() {
-            let game = ''
-            switch (this.mode) {
-                case 0:
-                    game = 'Červený'
-                    break
-                case 1:
-                    game = 'Filky'
-                    break
-                case 2:
-                    game = 'PrPo'
-                    break
-                case 3:
-                    game = 'Všechny'
-                    break
-                case 4:
-                    game = 'Bedrník'
-                    break
-
-                default:
-                    break
-            }
-            return game
+            return gameModes.name()
         }
     },
     methods: {
@@ -137,11 +119,13 @@ export default Vue.extend({
             // deletes selected card out of hero's deck
             this.playersCards[3] = this.playersCards[3].filter(c => c !== card)
 
-            // opponents make their reaction turns
-            this.allVillainsReact(this.boardCards.length)
+            if (this.mode !== 6) {
+                // opponents make their reaction turns
+                this.allVillainsReact(this.boardCards.length)
+                // appointing loser of the current game
+                this.currentLoser = this.appointLoser()
+            }
 
-            // appointing loser of the current game
-            this.currentLoser = this.appointLoser()
             this.calculatePoints()
 
             setTimeout(() => {
@@ -166,7 +150,12 @@ export default Vue.extend({
         },
         validateCard(card: Card): boolean {
             // checks if hero is turning the valid flush
-            if (this.initPlayer !== 3 && !this.isFlushValid(card)) {
+            // exception for game mode tens
+            if (
+                this.initPlayer !== 3 &&
+                !this.isFlushValid(card) &&
+                this.mode !== 6
+            ) {
                 return false
             }
 
@@ -184,6 +173,10 @@ export default Vue.extend({
                         this.initPlayer === 3 &&
                         !king.canInitHeart(card, this.playersCards[3])
                     )
+                        return false
+                    break
+                case 6:
+                    if (!tens.canPlayCard(card, this.alreadyPlayedCards))
                         return false
                     break
             }
@@ -315,39 +308,62 @@ export default Vue.extend({
             return currentLoser
         },
         calculatePoints(): void {
-            let score = 0
+            let score = []
             switch (this.mode) {
                 case 0:
-                    score = hearts.score(this.boardCards)
+                    score = hearts.score(this.boardCards, this.currentLoser)
                     break
                 case 1:
-                    score = queens.score(this.boardCards)
+                    score = queens.score(this.boardCards, this.currentLoser)
                     break
                 case 2:
-                    score = fila.score(this.playersCards[3].length)
+                    score = fila.score(
+                        this.playersCards[3].length,
+                        this.currentLoser
+                    )
                     break
                 case 4:
-                    score = king.score(this.boardCards)
+                    score = king.score(this.boardCards, this.currentLoser)
+                    break
+                case 6:
+                    score = tens.score(this.alreadyPlayedCards)
                     break
 
                 default:
-                    score = 1
+                    score = any.score(this.boardCards, this.currentLoser)
                     break
             }
-            this.currentScore[this.currentLoser] += score
+            this.currentScore = score.map(
+                (pts, index) => pts + this.currentScore[index]
+            )
+        },
+        giveUp(): void {
+            if (window.confirm('Really?')) {
+                this.currentScore[3] =
+                    8 - this.currentScore.reduce((score, sum) => sum + score)
+                this.boardCards = []
+                this.nextGame()
+            }
         },
         nextGame(): void {
             this.$store.dispatch('updateScore', this.currentScore)
             this.$store.dispatch('nextGame')
-            this.currentScore.fill(0)
+            this.currentScore = [0, 0, 0, 0]
             this.initPlayer = 3
             this.initCard = {} as Card
             this.initCards()
         }
     },
+    watch: {
+        boardCards(cards: Card[]) {
+            if (cards.length > 0)
+                cards.forEach(c => this.alreadyPlayedCards.push(c))
+        }
+    },
     created() {
         this.initCards()
         this.allVillainsInit()
+        this.$store.dispatch('setVillainsNames', playerNames.takeRandomNames())
     }
 })
 </script>
@@ -383,6 +399,11 @@ export default Vue.extend({
     }
 }
 
+.current-game {
+    position: fixed;
+    z-index: 20;
+}
+
 .card {
     width: 10%;
     max-width: 6em;
@@ -390,8 +411,9 @@ export default Vue.extend({
 
 .villains-container {
     height: 10em;
+    width: 80%;
     max-width: 60em;
-    margin: 0 auto;
+    margin: 4em auto 0;
 }
 
 @media screen and (max-width: 780px) {

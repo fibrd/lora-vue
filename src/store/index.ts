@@ -9,6 +9,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state,
     mutations: {
+        SET_VILLAINS_NAMES(state, names) {
+            state.villainsNames = names
+        },
         UPDATE_SCORE(state, score) {
             state.score = score
         },
@@ -17,6 +20,9 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        setVillainsNames({ commit }, names) {
+            commit('SET_VILLAINS_NAMES', names)
+        },
         updateScore({ state, commit }, score) {
             const updatedScore = state.score.map(
                 (points, index) => points + score[index]

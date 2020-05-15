@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
-import Results from '../views/Results.vue'
+import Level from '../views/Level.vue'
 
 Vue.use(VueRouter)
 
@@ -12,9 +12,9 @@ const routes: Array<RouteConfig> = [
         component: Home
     },
     {
-        path: '/results',
-        name: 'results',
-        component: Results
+        path: '/level',
+        name: 'level',
+        component: Level
     }
 ]
 

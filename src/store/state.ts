@@ -227,6 +227,7 @@ const state = {
             flush: 3
         }
     ] as Card[],
+    villainsNames: [] as string[],
     mode: 0,
     timeOut: 2000,
     score: [0, 0, 0, 0]
