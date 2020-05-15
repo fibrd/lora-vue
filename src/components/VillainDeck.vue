@@ -39,6 +39,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .card {
+    display: flex;
     position: absolute;
     border: 1px currentColor solid;
     border-radius: 0.4em;
@@ -65,11 +66,11 @@ export default Vue.extend({
     position: relative;
     justify-content: center;
     &:nth-child(1) {
-        justify-content: left;
+        justify-content: flex-start;
         top: 15em;
     }
     &:nth-child(3) {
-        justify-content: right;
+        justify-content: flex-end;
         top: 15em;
     }
 }
