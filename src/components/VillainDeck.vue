@@ -28,7 +28,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            cardBackSrc: './assets/cards/back.jpg'
+            cardBackSrc: './assets/cards/back.png'
         }
     },
     computed: {
@@ -43,6 +43,7 @@ export default Vue.extend({
     position: absolute;
     border: 1px currentColor solid;
     border-radius: 0.4em;
+    transition: box-shadow 1s ease;
 }
 .player-name {
     position: absolute;

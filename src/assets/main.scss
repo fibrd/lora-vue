@@ -1,0 +1,57 @@
+[v-cloak] {
+    display: none;
+}
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+
+    overflow: hidden;
+
+    h1 {
+        text-align: left;
+    }
+}
+
+#nav {
+    padding: 30px;
+
+    a {
+        font-weight: bold;
+        color: #2c3e50;
+
+        &.router-link-exact-active {
+            color: #42b983;
+        }
+    }
+}
+
+.current-game {
+    position: fixed;
+    z-index: 20;
+}
+
+.card {
+    width: 10%;
+    max-width: 6em;
+}
+
+.villains-container {
+    height: 10em;
+    width: 80%;
+    max-width: 60em;
+    margin: 4em auto 0;
+}
+
+@media screen and (max-width: 780px) {
+    .card {
+        width: 20%;
+    }
+}
+@media screen and (max-width: 460px) {
+    .card {
+        width: 20%;
+    }
+}

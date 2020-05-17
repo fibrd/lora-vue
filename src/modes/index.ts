@@ -2,42 +2,6 @@ import { Card } from '@/types'
 import store from '@/store'
 
 /**
- *  NAMES OF MODES
- */
-export const gameModes = {
-    name(): string {
-        let name = ''
-        switch (store.state.mode) {
-            case 0:
-                name = 'Červený'
-                break
-            case 1:
-                name = 'Filky'
-                break
-            case 2:
-                name = 'PrPo'
-                break
-            case 4:
-                name = 'Bedrník'
-                break
-            case 5:
-                name = 'Kvarty'
-                break
-            case 6:
-                name = 'Desítky'
-                break
-            case 7:
-                name = 'Maturita'
-                break
-            default:
-                name = 'Všechny'
-                break
-        }
-        return name
-    }
-}
-
-/**
  * GAME MODE HEARTS
  */
 export const hearts = {
@@ -230,7 +194,7 @@ export const king = {
 export const tens = {
     // cards array for initializing this game mode
     initCards: store.state.cards.map(c => {
-        return { ...c, src: './assets/cards/blank.jpg' }
+        return { ...c, src: './assets/cards/blank.png' }
     }) as Card[],
 
     // count current score
@@ -254,13 +218,56 @@ export const tens = {
                 playedCards.find(c => c.id === card.id - 1) !== undefined
         }
         return canPlayCard
+    },
+
+    villainTurn(playerCards: Card[], playedCards: Card[]): Card {
+        const eligeableCards = playerCards.filter(card =>
+            this.canPlayCard(card, playedCards)
+        )
+        return eligeableCards[0]
+    },
+
+    knock(player:number): void{
+        store.dispatch
     }
 }
 
 /**
- * LIST OF PLAYER NAMES
+ * GENERAL RULES FOR MORE GAME MODES
  */
-export const playerNames = {
+export const general = {
+    gameMode(): string {
+        let name = ''
+        switch (store.state.mode) {
+            case 0:
+                name = 'Červený'
+                break
+            case 1:
+                name = 'Filky'
+                break
+            case 2:
+                name = 'PrPo'
+                break
+            case 4:
+                name = 'Bedrník'
+                break
+            case 5:
+                name = 'Kvarty'
+                break
+            case 6:
+                name = 'Desítky'
+                break
+            case 7:
+                name = 'Maturita'
+                break
+            default:
+                name = 'Všechny'
+                break
+        }
+        return name
+    },
+
+    // list of all possible players names
     listOfNames: [
         'Adam',
         'Aleš',
@@ -309,6 +316,65 @@ export const playerNames = {
         'Vlastimil',
         'Vojtěch',
         'Zdeněk',
+        'Alan',
+        'Alexandr',
+        'Bedřich',
+        'Bohdan',
+        'Bohumil',
+        'Bohumír',
+        'Bohuslav',
+        'Boris',
+        'Bořivoj',
+        'Břetislav',
+        'Čeněk',
+        'Dalibor',
+        'Dan',
+        'Dominik',
+        'Drahomír',
+        'Dušan',
+        'Emil',
+        'Erik',
+        'Evžen',
+        'Gustav',
+        'Hynek',
+        'Igor',
+        'Ivan',
+        'Julius',
+        'Kryštof',
+        'Leoš',
+        'Lubor',
+        'Ludvík',
+        'Lumír',
+        'Marcel',
+        'Marián',
+        'Matěj',
+        'Miloslav',
+        'Miloš',
+        'Mirek',
+        'Mojmír',
+        'Nikola',
+        'Ota',
+        'Otakar',
+        'Přemysl',
+        'Radomír',
+        'Radoslav',
+        'Radovan',
+        'René',
+        'Robin',
+        'Rostislav',
+        'Rudolf',
+        'Svatopluk',
+        'Šimon',
+        'Tibor',
+        'Vilém',
+        'Vít',
+        'Vítězslav',
+        'Vladan',
+        'Vladislav',
+        'Vlastislav',
+        'Vratislav',
+        'Zbyněk',
+        'Zoltán',
         'Adéla',
         'Alena',
         'Andrea',
@@ -367,16 +433,25 @@ export const playerNames = {
         'Žaneta'
     ],
 
-    takeRandomNames(): string[] {
-        const randomIndex1 = Math.floor(Math.random() * this.listOfNames.length)
-        let randomIndex2 = Math.floor(Math.random() * this.listOfNames.length)
+    // generates an array of three random names
+    randomNames(): string[] {
+        const listNameLen = this.listOfNames.length
+        const randomIndex1 = Math.floor(Math.random() * listNameLen)
+        let randomIndex2 = Math.floor(Math.random() * listNameLen)
+        // each name should be unique
         while (randomIndex2 === randomIndex1) {
-            randomIndex2 = Math.floor(Math.random() * this.listOfNames.length)
+            randomIndex2 = Math.floor(Math.random() * listNameLen)
         }
-        let randomIndex3 = Math.floor(Math.random() * this.listOfNames.length)
+
+        let randomIndex3 = Math.floor(Math.random() * listNameLen)
+        // each name should be unique
         while (randomIndex3 === randomIndex1 || randomIndex3 === randomIndex2) {
-            randomIndex3 = Math.floor(Math.random() * this.listOfNames.length)
+            randomIndex3 = Math.floor(Math.random() * listNameLen)
         }
-        return [this.listOfNames[randomIndex1], this.listOfNames[randomIndex2], this.listOfNames[randomIndex3]]
+        return [
+            this.listOfNames[randomIndex1],
+            this.listOfNames[randomIndex2],
+            this.listOfNames[randomIndex3]
+        ]
     }
 }

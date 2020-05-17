@@ -55,7 +55,7 @@ export default Vue.extend({
     data() {
         return {
             cards: [] as Card[],
-            blankSrc: './assets/cards/blank.jpg'
+            blankSrc: './assets/cards/blank.png'
         }
     },
     computed: {

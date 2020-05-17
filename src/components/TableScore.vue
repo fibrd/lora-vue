@@ -1,16 +1,11 @@
 <template>
     <div class="table-container">
         <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Score</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
             <tbody>
                 <tr v-for="(points, index) in currentScore" :key="index">
-                    <td v-if="index === 3">Hero</td>
+                    <td v-if="index === 3">
+                        <strong>{{ playerName }}</strong>
+                    </td>
                     <td v-else>{{ villainsNames[index] }}</td>
                     <td>{{ points }}</td>
                     <td>{{ score[index] }}</td>
@@ -28,7 +23,7 @@ export default Vue.extend({
     props: {
         currentScore: Array
     },
-    computed: mapState(['score', 'villainsNames'])
+    computed: mapState(['score', 'playerName', 'villainsNames'])
 })
 </script>
 
@@ -42,13 +37,15 @@ export default Vue.extend({
     z-index: 20;
     border-collapse: collapse;
     text-align: left;
+    background-color: inherit;
 }
-thead {
+td {
     text-align: center;
 }
 
-.table {
+.table,
+td {
     border: 1px solid black;
-    padding: 0.4em 0.2em;
+    padding: 0.2em 0.4em;
 }
 </style>

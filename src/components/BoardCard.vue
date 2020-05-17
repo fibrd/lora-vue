@@ -1,6 +1,7 @@
 <template>
     <div class="board-wrapper">
         <img
+            v-cloak
             v-for="(boardCard, index) in sortedBoard"
             :key="boardCard.src + index"
             :src="boardCard.src"
@@ -8,7 +9,7 @@
                 blank: isBlank(boardCard.src),
                 highlighted: currentLoser === boardCard.sortId
             }"
-            class="card board-card"
+            class="board-card"
         />
     </div>
 </template>
@@ -25,7 +26,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            srcBlank: './assets/cards/blank.jpg'
+            srcBlank: './assets/cards/blank.png'
         }
     },
     computed: {
@@ -51,6 +52,10 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+@function intendCard($cardWidth, $totalWidth, $margin: 0) {
+    @return $totalWidth/2 - ($margin * 2 + $cardWidth)/2;
+}
+
 .board-wrapper {
     display: flex;
     align-items: center;
@@ -79,7 +84,7 @@ export default Vue.extend({
         display: flex;
         align-self: flex-end;
         position: absolute;
-        left: 22.5/2 - (2 * 0.5 +6) em / 2em;
+        left: intendCard(800, 25, 100); // 22.5/2 - (2 * 0.5 +6) / 2;
     }
 }
 
@@ -90,6 +95,9 @@ export default Vue.extend({
 .highlighted {
     box-shadow: 0px 0px 4px 4px rgba(138, 7, 7, 0.6);
     z-index: 10;
+}
+.card {
+    transition: box-shadow 1s ease;
 }
 
 .boarded-enter {
