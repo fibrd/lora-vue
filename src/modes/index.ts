@@ -32,14 +32,14 @@ export const hearts = {
         cards: Card[],
         eligeableCards: Card[],
         initCard: Card
-    ): Card {
+    ): Card[] {
         let currentCard = eligeableCards.length
             ? eligeableCards.find(c => c.value < initCard.value)
             : cards[cards.length - 1]
 
         // if there are some filtered cards with no lower value but the bigger one
         if (!currentCard) currentCard = eligeableCards[0]
-        return currentCard
+        return [currentCard]
     }
 }
 
@@ -66,14 +66,14 @@ export const queens = {
         sortedDeck: Card[],
         eligeableCards: Card[],
         initCard: Card
-    ): Card {
+    ): Card[] {
         let currentCard = eligeableCards.length
             ? eligeableCards.find(c => c.value < initCard.value)
             : sortedDeck[sortedDeck.length - 1]
 
         // if there are some filtered cards with no lower value but the bigger one
         if (!currentCard) currentCard = eligeableCards[0]
-        return currentCard
+        return [currentCard]
     }
 }
 
@@ -99,14 +99,14 @@ export const fila = {
         sortedDeck: Card[],
         eligeableCards: Card[],
         initCard: Card
-    ): Card {
+    ): Card[] {
         let currentCard = eligeableCards.length
             ? eligeableCards.find(c => c.value < initCard.value)
             : sortedDeck[sortedDeck.length - 1]
 
         // if there are some filtered cards with no lower value but the bigger one
         if (!currentCard) currentCard = eligeableCards[0]
-        return currentCard
+        return [currentCard]
     }
 }
 
@@ -132,14 +132,14 @@ export const any = {
         sortedDeck: Card[],
         eligeableCards: Card[],
         initCard: Card
-    ): Card {
+    ): Card[] {
         let currentCard = eligeableCards.length
             ? eligeableCards.find(c => c.value < initCard.value)
             : sortedDeck[sortedDeck.length - 1]
 
         // if there are some filtered cards with no lower value but the bigger one
         if (!currentCard) currentCard = eligeableCards[0]
-        return currentCard
+        return [currentCard]
     }
 }
 
@@ -173,7 +173,7 @@ export const king = {
         sortedDeck: Card[],
         eligeableCards: Card[],
         initCard: Card
-    ): Card {
+    ): Card[] {
         sortedDeck =
             sortedDeck.length === 8
                 ? sortedDeck.filter(c => c.id !== 31)
@@ -184,7 +184,44 @@ export const king = {
 
         // if there are some filtered cards with no lower value but the bigger one
         if (!currentCard) currentCard = eligeableCards[0]
-        return currentCard
+        return [currentCard]
+    }
+}
+
+/**
+ * GAME MODE QUARTERS
+ */
+export const quarters = {
+    // count current score
+    score(playersCards: Card[][]): number[] {
+        const score = playersCards.map(player => player.length)
+        return score
+    },
+
+    canPlayCard(card: Card, initCard: Card): boolean {
+        console.log(initCard, card)
+        return card.value - initCard.value <= 3 && card.flush === initCard.flush
+    },
+
+    villainTurn(playerCards: Card[], initCard: Card): Card[] {
+        const eligeableCards = playerCards.filter(card =>
+            this.canPlayCard(card, initCard)
+        )
+        return eligeableCards
+    },
+
+    // noEligeableCard(cards: Card[], playedCards: Card[]): boolean {
+    //     const eligeableCards = cards.filter(card =>
+    //         this.canPlayCard(card, playedCards)
+    //     )
+    //     return eligeableCards.length === 0
+    // },
+
+    isOver(playersCards: Card[][]): boolean {
+        const anyoneWithNoCards = playersCards.find(
+            player => player.length === 0
+        )
+        return anyoneWithNoCards !== undefined
     }
 }
 
@@ -198,9 +235,8 @@ export const tens = {
     }) as Card[],
 
     // count current score
-    score(playedCards: Card[]): number[] {
-        const score = [0, 0, 0, 0]
-        score[0] += 1
+    score(playersCards: Card[][]): number[] {
+        const score = playersCards.map(player => player.length)
         return score
     },
 
@@ -220,15 +256,29 @@ export const tens = {
         return canPlayCard
     },
 
-    villainTurn(playerCards: Card[], playedCards: Card[]): Card {
+    villainTurn(playerCards: Card[], playedCards: Card[]): Card[] {
         const eligeableCards = playerCards.filter(card =>
             this.canPlayCard(card, playedCards)
         )
-        return eligeableCards[0]
+        return eligeableCards
     },
 
-    knock(player:number): void{
+    noEligeableCard(cards: Card[], playedCards: Card[]): boolean {
+        const eligeableCards = cards.filter(card =>
+            this.canPlayCard(card, playedCards)
+        )
+        return eligeableCards.length === 0
+    },
+
+    knock(player: number): void {
         store.dispatch
+    },
+
+    isOver(playersCards: Card[][]): boolean {
+        const anyoneWithNoCards = playersCards.find(
+            player => player.length === 0
+        )
+        return anyoneWithNoCards !== undefined
     }
 }
 
@@ -236,6 +286,17 @@ export const tens = {
  * GENERAL RULES FOR MORE GAME MODES
  */
 export const general = {
+    // list of all game modes
+    listOfGameModes: [
+        'Červený',
+        'Filky',
+        'PrPo',
+        'Všechny',
+        'Bedrník',
+        'Kvarty',
+        'Desítky'
+    ],
+
     gameMode(): string {
         let name = ''
         switch (store.state.mode) {

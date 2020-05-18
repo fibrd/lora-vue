@@ -138,16 +138,16 @@ export default Vue.extend({
 
 @media screen and (max-width: 460px) {
     .clubs-wrapper {
-        top: 2em;
+        top: 1em;
     }
     .spades-wrapper {
         top: 0em;
     }
     .diamonds-wrapper {
-        top: -2em;
+        top: -1em;
     }
     .hearts-wrapper {
-        top: -4em;
+        top: -2em;
     }
 }
 </style>

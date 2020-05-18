@@ -11,6 +11,7 @@
                 :villain="index - 1"
             />
         </div>
+        <exam-select v-if="mode === 7" />
         <board-card
             v-if="!isTens"
             :currentLoser="currentLoser"
@@ -23,9 +24,15 @@
             @cardTurned="heroTurn($event)"
             @giveUp="giveUp"
         />
-        <button v-on:click="giveUp" v-show="!isTens">Give up</button>
-        <button v-on:click="tensNext" v-show="isTens">Next one</button>
-        <button v-on:click="tensKnock(3)" v-show="isTens">Ťuk</button>
+        <div class="button-container">
+            <button v-on:click="giveUp" v-show="!isTens">Zahodit karty</button>
+            <button v-on:click="tensNext" v-show="isTens && tensPlayed">
+                Další hráč
+            </button>
+            <button v-on:click="tensKnock(3)" v-show="isTens && !tensPlayed">
+                Ťuk
+            </button>
+        </div>
 
         <div id="nav">
             <router-link to="/">Home</router-link> |
@@ -38,7 +45,16 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Card } from '@/types'
-import { general, hearts, queens, fila, any, king, tens } from '@/modes/'
+import {
+    general,
+    hearts,
+    queens,
+    fila,
+    any,
+    king,
+    quarters,
+    tens
+} from '@/modes/'
 import { mapState } from 'vuex'
 
 // components
@@ -47,6 +63,7 @@ import VillainDeck from '@/components/VillainDeck.vue'
 import BoardCard from '@/components/BoardCard.vue'
 import TensBoard from '@/components/TensBoard.vue'
 import TableScore from '@/components/TableScore.vue'
+import ExamSelect from '@/components/ExamSelect.vue'
 
 // lodash helpers
 import { shuffle, chunk, sortBy, takeRight, slice } from 'lodash-es'
@@ -57,7 +74,8 @@ export default Vue.extend({
         VillainDeck,
         BoardCard,
         TensBoard,
-        TableScore
+        TableScore,
+        ExamSelect
     },
     data() {
         return {
@@ -68,16 +86,27 @@ export default Vue.extend({
             currentScore: [0, 0, 0, 0],
             initPlayer: 3,
             currentLoser: -1,
-            initCard: {} as Card
+            initCard: {} as Card,
+            tensPlayed: false,
+            timer: 0
         }
     },
     computed: {
-        ...mapState(['cards', 'mode', 'timeOut']),
+        ...mapState([
+            'cards',
+            'mode',
+            'timeOut',
+            'examination',
+            'initThaliaPlayer'
+        ]),
         gameMode() {
             return general.gameMode()
         },
         isTens() {
             return this.mode === 6
+        },
+        isQuarters() {
+            return this.mode === 5
         }
     },
     methods: {
@@ -99,12 +128,10 @@ export default Vue.extend({
         heroTurn(card: Card) {
             // reaction timeout is set up
             if (!this.heroCanAct && !this.isTens) return
-            this.heroCanAct = false
+            if (this.mode > 6) return
+            if (!this.validateCard(card)) return
 
-            if (!this.validateCard(card)) {
-                this.heroCanAct = true
-                return
-            }
+            this.heroCanAct = false
 
             // deletes selected card out of hero's deck
             this.playersCards[3] = this.playersCards[3].filter(c => c !== card)
@@ -117,12 +144,13 @@ export default Vue.extend({
                 this.initCard = this.boardCards[0]
                 // opponents make their reaction turns
                 this.allVillainsReact(this.boardCards.length)
+
                 // appointing loser of the current game
                 this.currentLoser = this.appointLoser()
 
                 this.calculatePoints()
 
-                setTimeout(() => {
+                this.timer = setTimeout(() => {
                     // setting up the new init player
                     this.initPlayer = this.currentLoser
                     this.currentLoser = -1
@@ -144,15 +172,18 @@ export default Vue.extend({
                         this.nextGame()
                     }
                 }, this.timeOut)
+            } else {
+                this.tensOverCheck()
+                this.tensPlayed = true
             }
         },
         validateCard(card: Card): boolean {
             // checks if hero is turning the valid flush
-            // exception for game mode tens
+            // w/ exception for game mode tens & quarters
             if (
                 this.initPlayer !== 3 &&
                 !this.isFlushValid(card) &&
-                this.mode !== 6
+                !this.isTens
             ) {
                 return false
             }
@@ -170,6 +201,13 @@ export default Vue.extend({
                     if (
                         this.initPlayer === 3 &&
                         !king.canInitHeart(card, this.playersCards[3])
+                    )
+                        return false
+                    break
+                case 5:
+                    if (
+                        this.initPlayer !== 3 &&
+                        !quarters.canPlayCard(card, this.initCard)
                     )
                         return false
                     break
@@ -236,6 +274,7 @@ export default Vue.extend({
                 this.playersCards[villain] = playerCards.filter(
                     c => c !== currentCard
                 )
+                return
             }
 
             // filtering players cards w/ the same flush
@@ -243,38 +282,44 @@ export default Vue.extend({
                 c => c.flush === this.initCard.flush
             ) as Card[]
 
-            let currentCard = {} as Card
+            let currentCards = [] as Card[]
             switch (this.mode) {
                 case 0:
-                    currentCard = hearts.villainReactCard(
+                    currentCards = hearts.villainReactCard(
                         playerCards,
                         eligeableCards,
                         this.initCard
                     )
                     break
                 case 1:
-                    currentCard = queens.villainReactCard(
+                    currentCards = queens.villainReactCard(
                         sortedDeck,
                         eligeableCards,
                         this.initCard
                     )
                     break
                 case 4:
-                    currentCard = king.villainReactCard(
+                    currentCards = king.villainReactCard(
                         sortedDeck,
                         eligeableCards,
                         this.initCard
                     )
                     break
+                case 5:
+                    currentCards = quarters.villainTurn(
+                        playerCards,
+                        this.initCard
+                    )
+                    break
                 case 6:
-                    currentCard = tens.villainTurn(
+                    currentCards = tens.villainTurn(
                         playerCards,
                         this.alreadyPlayedCards
                     )
                     break
 
                 default:
-                    currentCard = any.villainReactCard(
+                    currentCards = any.villainReactCard(
                         sortedDeck,
                         eligeableCards,
                         this.initCard
@@ -283,12 +328,12 @@ export default Vue.extend({
             }
 
             // immutable array push
-            if (currentCard) {
-                this.boardCards = [...this.boardCards, currentCard]
+            if (currentCards.length) {
+                this.boardCards = [...this.boardCards, ...currentCards]
                 this.playersCards[villain] = playerCards.filter(
-                    c => c !== currentCard
+                    c => !currentCards.includes(c)
                 )
-            } else {
+            } else if (this.isTens) {
                 this.tensKnock(villain)
             }
         },
@@ -336,7 +381,7 @@ export default Vue.extend({
                     score = king.score(this.boardCards, this.currentLoser)
                     break
                 case 6:
-                    score = tens.score(this.alreadyPlayedCards)
+                    score = tens.score(this.playersCards)
                     break
 
                 default:
@@ -348,28 +393,64 @@ export default Vue.extend({
             )
         },
         tensNext(): void {
-            for (let index = 0; index < 3; index++) {
-                this.villainTurn(index)
+            for (let i = 0; i < 3; i++) {
+                this.villainTurn(i)
+                this.tensOverCheck()
+            }
+            this.tensPlayed = false
+        },
+        tensOverCheck(): void {
+            if (tens.isOver(this.playersCards)) {
+                this.calculatePoints()
+                this.heroCanAct = false
+
+                this.nextGame()
+                this.heroCanAct = true
             }
         },
         tensKnock(player: number): void {
-            this.currentScore = this.currentScore.map((pts, index) =>
-                index === player ? ++pts : pts
-            )
+            if (
+                tens.noEligeableCard(
+                    this.playersCards[player],
+                    this.alreadyPlayedCards
+                )
+            ) {
+                this.currentScore = this.currentScore.map((pts, index) =>
+                    index === player ? ++pts : pts
+                )
+                if (player === 3) this.tensNext()
+            } else {
+                alert('Pozor na renonc!')
+            }
         },
         giveUp(): void {
-            if (window.confirm('Really?')) {
+            if (window.confirm('Chcete hru dobrovolně vzdát?')) {
                 this.currentScore[3] =
                     8 - this.currentScore.reduce((score, sum) => sum + score)
+
                 this.boardCards = []
+                this.heroCanAct = true
+                window.clearTimeout(this.timer)
                 this.nextGame()
             }
         },
         nextGame(): void {
+            if (this.examination) {
+                if (this.currentScore[this.initThaliaPlayer] > 0) {
+                    this.$store.dispatch('setGame', 7)
+                    this.currentScore.fill(0)
+                    this.currentScore[this.initThaliaPlayer] = 8
+                } else {
+                    this.$store.dispatch('setGame', 0)
+                    this.$store.dispatch('turnOffExam')
+                }
+            } else {
+                this.$store.dispatch('nextGame')
+            }
             this.$store.dispatch('updateScore', this.currentScore)
-            this.$store.dispatch('nextGame')
             this.currentScore = [0, 0, 0, 0]
-            this.initPlayer = 3
+            this.initPlayer = this.initThaliaPlayer
+            this.alreadyPlayedCards = []
             this.initCard = {} as Card
             this.initCards()
         }
@@ -378,6 +459,12 @@ export default Vue.extend({
         boardCards(cards: Card[]) {
             if (cards.length > 0)
                 cards.forEach(c => this.alreadyPlayedCards.push(c))
+        },
+        mode(value: number) {
+            if (value === 7) {
+                this.$store.dispatch('turnOnExam')
+                this.boardCards = []
+            }
         }
     },
     created() {

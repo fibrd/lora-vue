@@ -1,7 +1,7 @@
 <template>
     <div class="dif">
         <h1 class="text-center">Nastavení:</h1>
-        <form action="">
+        <form class="settings-form">
             <div>
                 <label for="nameInput">Jméno: </label>
                 <input
@@ -10,6 +10,19 @@
                     id="nameInput"
                     maxlength="10"
                 />
+            </div>
+            <div>
+                <label for="timeOut">Čas odezvy: </label>
+                <select id="timeOut" @change="timeOutChanged($event)">
+                    <option
+                        v-for="n in 3"
+                        :key="n"
+                        :value="n * 1000"
+                        :selected="+timeOut === n * 1000"
+                    >
+                        {{ n }}s
+                    </option>
+                </select>
             </div>
         </form>
     </div>
@@ -25,8 +38,14 @@ export default Vue.extend({
             name: ''
         }
     },
-    computed: mapState(['playerName']),
-    methods: mapActions(['setPlayerName']),
+    computed: mapState(['playerName', 'timeOut']),
+    methods: {
+        ...mapActions(['setPlayerName', 'setTimeOut']),
+        // eslint-disable-next-line
+        timeOutChanged(event: any): void {
+            this.setTimeOut(event.target.value)
+        }
+    },
     watch: {
         name(value) {
             if (this.playerName !== value) {
