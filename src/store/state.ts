@@ -233,7 +233,8 @@ const state = {
     timeOut: 2000,
     score: [0, 0, 0, 0],
     examination: false,
-    initThaliaPlayer: 3
+    thalia: 0,
+    gameIsOver: false
 }
 
 export default state

@@ -21,7 +21,7 @@ export default new Vuex.Store({
         UPDATE_SCORE(state, score) {
             state.score = score
         },
-        NEXT_GAME(state) {
+        NEXT_GAME_MODE(state) {
             state.mode++
         },
         SET_GAME(state, mode) {
@@ -32,6 +32,12 @@ export default new Vuex.Store({
         },
         TURN_OFF_EXAM(state) {
             state.examination = false
+        },
+        SET_THALIA(state, thalia) {
+            state.thalia = thalia
+        },
+        SET_GAME_OVER(state) {
+            state.gameIsOver = true
         }
     },
     actions: {
@@ -50,8 +56,8 @@ export default new Vuex.Store({
             )
             commit('UPDATE_SCORE', updatedScore)
         },
-        nextGame({ commit }) {
-            commit('NEXT_GAME')
+        nextGameMode({ commit }) {
+            commit('NEXT_GAME_MODE')
         },
         setGame({ commit }, mode) {
             commit('SET_GAME', +mode)
@@ -61,6 +67,12 @@ export default new Vuex.Store({
         },
         turnOffExam({ commit }) {
             commit('TURN_OFF_EXAM')
+        },
+        setThalia({ commit }, thalia) {
+            commit('SET_THALIA', +thalia)
+        },
+        setGameOver({ commit }) {
+            commit('SET_GAME_OVER')
         }
     }
 })
