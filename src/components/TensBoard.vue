@@ -135,7 +135,7 @@ export default Vue.extend({
     }
     @for $i from 1 through 8 {
         .card:nth-child(#{$i}) {
-            left: 1em - $i * 2em/9;
+            left: 4.5em - $i * 1em;
         }
     }
 }

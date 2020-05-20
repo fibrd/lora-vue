@@ -37,9 +37,21 @@ export default Vue.extend({
         listModes() {
             return [
                 ...general.listOfGameModes,
+                'Maturita I',
+                'Maturita II',
+                'Maturita III',
                 ...general.listOfGameModes,
+                'Maturita I',
+                'Maturita II',
+                'Maturita III',
                 ...general.listOfGameModes,
-                ...general.listOfGameModes
+                'Maturita I',
+                'Maturita II',
+                'Maturita III',
+                ...general.listOfGameModes,
+                'Maturita I',
+                'Maturita II',
+                'Maturita III'
             ]
         }
     }

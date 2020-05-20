@@ -229,12 +229,12 @@ export const quarters = {
         return eligeableCards
     },
 
-    // noEligeableCard(cards: Card[], playedCards: Card[]): boolean {
-    //     const eligeableCards = cards.filter(card =>
-    //         this.canPlayCard(card, playedCards)
-    //     )
-    //     return eligeableCards.length === 0
-    // },
+    noEligeableCard(cards: Card[], initCard: Card): boolean {
+        const eligeableCards = cards.filter(card =>
+            this.canPlayCard(card, initCard)
+        )
+        return eligeableCards.length === 0
+    },
 
     isOver(playersCards: Card[][]): boolean {
         const anyoneWithNoCards = playersCards.find(
@@ -316,10 +316,7 @@ export const general = {
         'Všechny',
         'Bedrník',
         'Kvarty',
-        'Desítky',
-        'Maturita I',
-        'Maturita II',
-        'Maturita III'
+        'Desítky'
     ],
 
     gameMode(): string {
