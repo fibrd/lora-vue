@@ -106,7 +106,7 @@ export default Vue.extend({
 
 @for $i from 1 through 4 {
     .flush-wrapper:nth-child(#{$i}) {
-        top: 8em - $i * 4em;
+        top: $i * -2em +2em;
     }
 }
 .card {
@@ -124,30 +124,19 @@ export default Vue.extend({
     }
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 860px) {
     .card {
         width: 4em;
     }
-
-    @for $i from 1 through 8 {
-        .card:nth-child(#{$i}) {
-            left: 2.25em - $i * 0.5em;
+    @for $i from 1 through 4 {
+        .flush-wrapper:nth-child(#{$i}) {
+            top: $i * -2em + 5em;
         }
     }
-}
-
-@media screen and (max-width: 460px) {
-    .clubs-wrapper {
-        top: 1em;
-    }
-    .spades-wrapper {
-        top: 0em;
-    }
-    .diamonds-wrapper {
-        top: -1em;
-    }
-    .hearts-wrapper {
-        top: -2em;
+    @for $i from 1 through 8 {
+        .card:nth-child(#{$i}) {
+            left: 1em - $i * 2em/9;
+        }
     }
 }
 </style>

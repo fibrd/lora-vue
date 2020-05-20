@@ -52,8 +52,8 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@function intendCard($cardWidth, $totalWidth, $margin: 0) {
-    @return $totalWidth/2 - ($margin * 2 + $cardWidth)/2;
+@function intend-card($totalWidth, $cardWidth, $margin: 0) {
+    @return ($totalWidth / 2 - ((2 * $margin + $cardWidth)/2)) * 1em;
 }
 
 .board-wrapper {
@@ -61,30 +61,28 @@ export default Vue.extend({
     align-items: center;
     justify-content: center;
     position: relative;
-    min-height: 22.5em;
-    max-width: 22.5em;
-    margin: 2em auto 6em;
+    min-height: 18em;
+    max-width: 18em;
+    margin: 0 auto 4em;
 }
+
 .board-card {
-    width: 6em;
+    display: flex;
+    width: 5em;
     margin: 0.5em;
     &:nth-child(1) {
-        display: flex;
         align-self: center;
     }
     &:nth-child(2) {
-        display: flex;
         align-self: flex-start;
     }
     &:nth-child(3) {
-        display: flex;
         align-self: center;
     }
     &:nth-child(4) {
-        display: flex;
         align-self: flex-end;
         position: absolute;
-        left: intendCard(800, 25, 100); // 22.5/2 - (2 * 0.5 +6) / 2;
+        left: intend-card(18, 5, 0.5);
     }
 }
 
@@ -108,27 +106,31 @@ export default Vue.extend({
     transition: opacity 1s ease-in;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 860px) {
     .board-wrapper {
-        min-height: 20em;
-        margin-top: 0;
-    }
-    .board-card {
-        width: 5em;
-        &:nth-child(4) {
-            left: 22.5/2 - (2 * 0.5 +5) em / 2em;
-        }
+        margin-bottom: 3em;
+        min-height: 18em;
+        top: -0.5em;
     }
 }
 @media screen and (max-width: 460px) {
     .board-wrapper {
-        min-height: 15em;
-        margin-bottom: 6em;
+        min-height: 12em;
+        width: 12em;
+        position: relative;
+        top: -3em;
+        margin-bottom: 0em;
     }
     .board-card {
-        width: 4em;
+        margin: 0.2em;
+        width: 3.5em;
+        &:nth-child(1),
+        &:nth-child(3) {
+            align-self: flex-end;
+        }
         &:nth-child(4) {
-            left: 22.5/2 - (2 * 0.5 +4) em / 2em;
+            z-index: 100;
+            left: intend-card(12, 3.5, 0.2);
         }
     }
 }

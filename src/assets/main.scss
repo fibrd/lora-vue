@@ -13,7 +13,8 @@
     h1 {
         text-align: left;
     }
-    margin-bottom: 2em;
+    margin: 1em auto;
+    max-width: 60em;
 }
 
 #nav {
@@ -28,15 +29,16 @@
         }
     }
 }
-
-.current-game {
-    position: fixed;
-    z-index: 20;
+.page-heading {
+    display: flex;
+    justify-content: flex-start;
+    .current-game {
+        margin-bottom: 0;
+    }
 }
 
 .card {
-    width: 10%;
-    max-width: 6em;
+    max-width: 5em;
 }
 
 .villains-container {
@@ -46,14 +48,9 @@
     margin: 4em auto 0;
 }
 
-@media screen and (max-width: 780px) {
-    .card {
-        width: 20%;
-    }
-}
 @media screen and (max-width: 460px) {
-    .card {
-        width: 20%;
+    #app {
+        font-size: 90%;
     }
 }
 
@@ -87,4 +84,10 @@ button:active {
     margin: 0 auto;
     display: flex;
     justify-content: flex-end;
+    font-size: 0.8em;
+
+    a {
+        font-weight: bold;
+        color: #2c3e50;
+    }
 }

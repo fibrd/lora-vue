@@ -1,9 +1,8 @@
 <template>
     <div class="card-wrapper">
-        <h4 class="player-name">
-            {{ villainsNames[villain] }}
-        </h4>
-
+        <div class="player-name">
+            <h5>{{ villainsNames[villain] }} ({{ currentScore[villain] }})</h5>
+        </div>
         <img
             v-for="n in villainCards.length"
             :key="n"
@@ -24,7 +23,8 @@ export default Vue.extend({
     props: {
         villainCards: Array as () => Card[],
         highlighted: Boolean,
-        villain: Number
+        villain: Number,
+        currentScore: Array
     },
     data() {
         return {
@@ -47,8 +47,13 @@ export default Vue.extend({
 }
 .player-name {
     position: absolute;
-    top: -3.5em;
+    top: -2em;
     z-index: 25;
+
+    h5,
+    h6 {
+        margin: 0;
+    }
 }
 
 .highlighted {
@@ -86,11 +91,9 @@ export default Vue.extend({
     opacity: 0;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 860px) {
     .card {
-        width: 14%;
-        min-width: 4em;
-        max-width: 5em;
+        width: 4em;
         border-radius: 0.6em;
     }
 
@@ -105,8 +108,7 @@ export default Vue.extend({
 }
 @media screen and (max-width: 460px) {
     .card {
-        width: 15%;
-        min-width: 3em;
+        width: 3.5em;
     }
 }
 </style>

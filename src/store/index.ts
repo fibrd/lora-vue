@@ -19,7 +19,7 @@ export default new Vuex.Store({
             state.timeOut = timeOut
         },
         UPDATE_SCORE(state, score) {
-            state.score = score
+            state.totalScore = score
         },
         NEXT_GAME_MODE(state) {
             state.mode++
@@ -32,6 +32,9 @@ export default new Vuex.Store({
         },
         TURN_OFF_EXAM(state) {
             state.examination = false
+        },
+        SET_EXAM_ATTEMPT(state, attempt) {
+            state.examAttempt = attempt
         },
         SET_THALIA(state, thalia) {
             state.thalia = thalia
@@ -51,10 +54,14 @@ export default new Vuex.Store({
             commit('SET_TIME_OUT', timeOut)
         },
         updateScore({ state, commit }, score) {
-            const updatedScore = state.score.map(
-                (points, index) => points + score[index]
-            )
-            commit('UPDATE_SCORE', updatedScore)
+            const totalScoreLen = state.totalScore.length
+            const updatedScore =
+                totalScoreLen > 0
+                    ? state.totalScore[totalScoreLen - 1].map(
+                          (points, index) => points + score[index]
+                      )
+                    : score
+            commit('UPDATE_SCORE', [...state.totalScore, updatedScore])
         },
         nextGameMode({ commit }) {
             commit('NEXT_GAME_MODE')
@@ -67,12 +74,17 @@ export default new Vuex.Store({
         },
         turnOffExam({ commit }) {
             commit('TURN_OFF_EXAM')
+            commit('SET_EXAM_ATTEMPT', 0)
         },
         setThalia({ commit }, thalia) {
             commit('SET_THALIA', +thalia)
         },
         setGameOver({ commit }) {
             commit('SET_GAME_OVER')
-        }
+        },
+        setExamAttempt({ commit }, attempt) {
+            commit('SET_EXAM_ATTEMPT', +attempt)
+        },
+
     }
 })

@@ -1,30 +1,24 @@
 <template>
     <div class="dif">
         <h1 class="text-center">Nastavení:</h1>
-        <form class="settings-form">
-            <div>
-                <label for="nameInput">Jméno: </label>
-                <input
-                    v-model="name"
-                    type="text"
-                    id="nameInput"
-                    maxlength="10"
-                />
-            </div>
-            <div>
-                <label for="timeOut">Čas odezvy: </label>
-                <select id="timeOut" @change="timeOutChanged($event)">
-                    <option
-                        v-for="n in 3"
-                        :key="n"
-                        :value="n * 1000"
-                        :selected="+timeOut === n * 1000"
-                    >
-                        {{ n }}s
-                    </option>
-                </select>
-            </div>
-        </form>
+
+        <div>
+            <label for="nameInput">Jméno: </label>
+            <input v-model="name" type="text" id="nameInput" maxlength="10" />
+        </div>
+        <div>
+            <label for="timeOut">Čas odezvy: </label>
+            <select id="timeOut" @change="timeOutChanged($event)">
+                <option
+                    v-for="n in 3"
+                    :key="n"
+                    :value="n * 1000"
+                    :selected="+timeOut === n * 1000"
+                >
+                    {{ n }}s
+                </option>
+            </select>
+        </div>
     </div>
 </template>
 

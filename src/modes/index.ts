@@ -310,26 +310,29 @@ export const tens = {
 export const general = {
     // list of all game modes
     listOfGameModes: [
-        'Červený',
+        'Červené',
         'Filky',
-        'PrPo',
+        'Pr-Po',
         'Všechny',
         'Bedrník',
         'Kvarty',
-        'Desítky'
+        'Desítky',
+        'Maturita I',
+        'Maturita II',
+        'Maturita III'
     ],
 
     gameMode(): string {
         let name = ''
         switch (store.state.mode) {
             case 0:
-                name = 'Červený'
+                name = 'Červené'
                 break
             case 1:
                 name = 'Filky'
                 break
             case 2:
-                name = 'PrPo'
+                name = 'Pr-Po'
                 break
             case 4:
                 name = 'Bedrník'
@@ -341,7 +344,7 @@ export const general = {
                 name = 'Desítky'
                 break
             case 7:
-                name = 'Maturita'
+                name = 'Výběr'
                 break
             default:
                 name = 'Všechny'

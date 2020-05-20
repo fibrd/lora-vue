@@ -231,8 +231,9 @@ const state = {
     playerName: 'Hero',
     mode: 0,
     timeOut: 2000,
-    score: [0, 0, 0, 0],
+    totalScore: [] as number[][],
     examination: false,
+    examAttempt: 0,
     thalia: 0,
     gameIsOver: false
 }

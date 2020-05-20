@@ -1,12 +1,13 @@
 <template>
     <div id="app">
         <div v-if="!gameIsOver" class="game-container">
-            <h1 class="current-game">
-                <span v-show="this.examination">Maturita: </span>
-                {{ gameMode }}
-            </h1>
-            <h2 class="current-thalie">{{ thalia + 1 }}. tálie</h2>
-            <table-score :currentScore="currentScore" />
+            <div class="page-heading">
+                <h3 class="current-game">
+                    <span v-show="this.examination">Maturita: </span>
+                    {{ gameMode }}
+                    ({{ thalia + 1 }}. tálie)
+                </h3>
+            </div>
             <div class="villains-container">
                 <villain-deck
                     v-for="index in 3"
@@ -14,6 +15,7 @@
                     :highlighted="initPlayer === index - 1"
                     :villainCards="playersCards[index - 1]"
                     :villain="index - 1"
+                    :currentScore="currentScore"
                 />
             </div>
             <exam-select v-if="mode === 7" :examAttempt="examAttempt" />
@@ -26,32 +28,39 @@
             <tens-board v-else :playedCards="alreadyPlayedCards" />
             <hero-deck
                 :heroCards="playersCards[3]"
+                :currentScore="currentScore[3]"
                 @cardTurned="heroTurn($event)"
                 @giveUp="giveUp"
             />
             <div class="button-container">
-                <button
-                    v-on:click="giveUp"
+                <a
+                    href=""
+                    @click.prevent="giveUp"
                     v-show="!isTens && !isQuarters && mode !== 7"
                 >
                     Zahodit karty
-                </button>
-                <button v-on:click="tensNext" v-show="isTens && tensPlayed">
+                </a>
+                <a
+                    href=""
+                    @click.prevent="tensNext"
+                    v-show="isTens && tensPlayed"
+                >
                     Další hráč
-                </button>
-                <button
-                    v-on:click="tensKnock(3)"
+                </a>
+                <a
+                    href=""
+                    @click.prevent="tensKnock(3)"
                     v-show="isTens && !tensPlayed"
                 >
                     Ťuk
-                </button>
-                <button v-on:click="quartersKnock" v-show="isQuarters">
+                </a>
+                <a href="" @click.prevent="quartersKnock" v-show="isQuarters">
                     Nemám
-                </button>
+                </a>
             </div>
         </div>
         <div id="nav">
-            <router-link to="/">Home</router-link> |
+            <router-link to="/">Výsledky</router-link> |
             <router-link to="/settings">Nastavení</router-link>
         </div>
         <router-view />
@@ -78,7 +87,6 @@ import HeroDeck from '@/components/HeroDeck.vue'
 import VillainDeck from '@/components/VillainDeck.vue'
 import BoardCard from '@/components/BoardCard.vue'
 import TensBoard from '@/components/TensBoard.vue'
-import TableScore from '@/components/TableScore.vue'
 import ExamSelect from '@/components/ExamSelect.vue'
 
 // lodash helpers
@@ -90,7 +98,6 @@ export default Vue.extend({
         VillainDeck,
         BoardCard,
         TensBoard,
-        TableScore,
         ExamSelect
     },
     data() {
@@ -104,8 +111,7 @@ export default Vue.extend({
             currentLoser: -1,
             initCard: {} as Card,
             tensPlayed: false,
-            timer: 0,
-            examAttempt: 0
+            timer: 0
         }
     },
     computed: {
@@ -115,7 +121,8 @@ export default Vue.extend({
             'timeOut',
             'examination',
             'thalia',
-            'gameIsOver'
+            'gameIsOver',
+            'examAttempt'
         ]),
         gameMode() {
             return general.gameMode()
@@ -136,7 +143,8 @@ export default Vue.extend({
             'nextGameMode',
             'setGame',
             'setThalia',
-            'setGameOver'
+            'setGameOver',
+            'setExamAttempt'
         ]),
         shuffleDeck(): Card[] {
             return shuffle(this.cards)
@@ -494,19 +502,25 @@ export default Vue.extend({
         },
         nextThalia(): void {
             if (this.thalia === 3) this.gameOver()
-            this.examAttempt = 0
             this.setGame(0)
             this.setThalia(this.thalia + 1)
+            if (this.examAttempt < 3) {
+                // if examination is done earlier it fills the vacant fields
+                for (let i = 0; i <= 2 - this.examAttempt; i++) {
+                    this.updateScore([0, 0, 0, 0])
+                }
+            }
             this.turnOffExam()
         },
         nextGame(): void {
+            this.updateScore(this.currentScore)
+
             if (!this.examination) {
                 this.nextGameMode()
             } else {
                 this.examinate()
             }
 
-            this.updateScore(this.currentScore)
             this.resetGameStats()
             this.initCards()
             this.allVillainsInit()
@@ -535,7 +549,7 @@ export default Vue.extend({
         },
         mode(value: number) {
             if (value === 7) {
-                this.examAttempt++
+                this.setExamAttempt(this.examAttempt + 1)
 
                 this.turnOnExam()
                 this.resetGameStats()

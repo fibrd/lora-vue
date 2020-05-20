@@ -1,5 +1,8 @@
 <template>
     <div class="hero-wrapper">
+        <div class="player-name">
+            <h5>{{ playerName }} ({{ currentScore }})</h5>
+        </div>
         <transition-group name="turned" class="card-wrapper">
             <img
                 v-for="card in sortedCards"
@@ -15,14 +18,20 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapState } from 'vuex'
 import { Card } from '@/types'
 import { sortBy } from 'lodash-es'
 
 export default Vue.extend({
     props: {
-        heroCards: Array as () => Card[]
+        heroCards: Array as () => Card[],
+        currentScore: {
+            type: Number,
+            default: 0
+        }
     },
     computed: {
+        ...mapState(['playerName']),
         sortedCards(): Card[] {
             return sortBy(this.heroCards, ['id'])
         }
@@ -40,12 +49,24 @@ export default Vue.extend({
         transform: scale(1.1);
     }
 }
-
-.card-wrapper {
-    max-width: 60em;
-    margin: 2em auto;
+.hero-wrapper {
     position: relative;
-    top: -4em;
+    max-width: 60em;
+    margin: 0em auto;
+}
+
+.player-name {
+    position: absolute;
+    top: -3em;
+    z-index: 25;
+    width: 100%;
+
+    h4,
+    h6 {
+        margin: 0 auto;
+        width: 80%;
+        text-align: left;
+    }
 }
 
 .turned-enter-active,
@@ -56,5 +77,11 @@ export default Vue.extend({
 .turned-enter,
 .turned-leave-to {
     opacity: 0;
+}
+
+@media screen and (max-width: 460px) {
+    .card {
+        width: 3.5em;
+    }
 }
 </style>
