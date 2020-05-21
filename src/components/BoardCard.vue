@@ -106,7 +106,7 @@ export default Vue.extend({
     transition: opacity 1s ease-in;
 }
 
-@media screen and (max-width: 860px) {
+@media screen and (max-width: 768px) {
     .board-wrapper {
         margin-bottom: 3em;
         min-height: 18em;

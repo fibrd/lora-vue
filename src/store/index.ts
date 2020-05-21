@@ -84,7 +84,6 @@ export default new Vuex.Store({
         },
         setExamAttempt({ commit }, attempt) {
             commit('SET_EXAM_ATTEMPT', +attempt)
-        },
-
+        }
     }
 })

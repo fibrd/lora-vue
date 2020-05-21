@@ -290,17 +290,6 @@ export const tens = {
             this.canPlayCard(card, playedCards)
         )
         return eligeableCards.length === 0
-    },
-
-    knock(player: number): void {
-        store.dispatch
-    },
-
-    isOver(playersCards: Card[][]): boolean {
-        const anyoneWithNoCards = playersCards.find(
-            player => player.length === 0
-        )
-        return anyoneWithNoCards !== undefined
     }
 }
 
@@ -308,6 +297,13 @@ export const tens = {
  * GENERAL RULES FOR MORE GAME MODES
  */
 export const general = {
+    noCardsCheck(playersCards: Card[][]): boolean {
+        const anyoneWithNoCards = playersCards.find(
+            player => player.length === 0
+        )
+        return anyoneWithNoCards !== undefined
+    },
+
     // list of all game modes
     listOfGameModes: [
         'Červené',

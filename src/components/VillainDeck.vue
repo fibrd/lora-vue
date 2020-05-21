@@ -91,12 +91,7 @@ export default Vue.extend({
     opacity: 0;
 }
 
-@media screen and (max-width: 860px) {
-    .card {
-        width: 4em;
-        border-radius: 0.6em;
-    }
-
+@media screen and (max-width: 768px) {
     .card-wrapper {
         &:nth-child(1) {
             top: 5em;

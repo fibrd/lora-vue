@@ -1,38 +1,8 @@
 <template>
     <div class="board-wrapper">
-        <div class="flush-wrapper clubs-wrapper">
+        <div class="flush-wrapper" v-for="flush in 4" :key="flush">
             <img
-                v-for="card in clubsPlayed"
-                :key="card.id"
-                :src="card.src"
-                :alt="card.id"
-                :class="{ blank: card.src === blankSrc }"
-                class="card"
-            />
-        </div>
-        <div class="flush-wrapper spades-wrapper">
-            <img
-                v-for="card in spadesPlayed"
-                :key="card.id"
-                :src="card.src"
-                :alt="card.id"
-                :class="{ blank: card.src === blankSrc }"
-                class="card"
-            />
-        </div>
-        <div class="flush-wrapper diamonds-wrapper">
-            <img
-                v-for="card in diamondsPlayed"
-                :key="card.id"
-                :src="card.src"
-                :alt="card.id"
-                :class="{ blank: card.src === blankSrc }"
-                class="card"
-            />
-        </div>
-        <div class="flush-wrapper hearts-wrapper">
-            <img
-                v-for="card in heartsPlayed"
+                v-for="card in flushSortedCards[flush - 1]"
                 :key="card.id"
                 :src="card.src"
                 :alt="card.id"
@@ -50,30 +20,32 @@ import { tens } from '@/modes'
 
 export default Vue.extend({
     props: {
-        playedCards: Array as () => Card[]
+        alreadyPlayedCards: Array as () => Card[]
     },
     data() {
         return {
-            cards: [] as Card[],
+            cardsPlayed: [] as Card[],
             blankSrc: './assets/cards/blank.png'
         }
     },
     computed: {
-        cardsPlayer(): Card[] {
-            return this.playedCards
-        },
-        clubsPlayed(): Card[] {
-            return this.filterFlush(this.cards, 0)
-        },
-        spadesPlayed(): Card[] {
-            return this.filterFlush(this.cards, 1)
-        },
-        diamondsPlayed(): Card[] {
-            return this.filterFlush(this.cards, 2)
-        },
-        heartsPlayed(): Card[] {
-            return this.filterFlush(this.cards, 3)
+        flushSortedCards(): Card[][] {
+            return [
+                this.filterFlush(this.cardsPlayed, 0),
+                this.filterFlush(this.cardsPlayed, 1),
+                this.filterFlush(this.cardsPlayed, 2),
+                this.filterFlush(this.cardsPlayed, 3)
+            ]
         }
+        // spadesPlayed(): Card[] {
+        //     return this.filterFlush(this.cardsPlayed, 1)
+        // },
+        // diamondsPlayed(): Card[] {
+        //     return this.filterFlush(this.cardsPlayed, 2)
+        // },
+        // heartsPlayed(): Card[] {
+        //     return this.filterFlush(this.cardsPlayed, 3)
+        // }
     },
     methods: {
         filterFlush(cards: Card[], flush: number): Card[] {
@@ -81,18 +53,18 @@ export default Vue.extend({
         }
     },
     watch: {
-        playedCards(cardsPlayed: Card[]) {
-            let newCards = this.cards
+        alreadyPlayedCards(cardsPlayed: Card[]) {
+            let newCards = this.cardsPlayed
             cardsPlayed.forEach(newCard => {
                 newCards = newCards.map(card => {
                     return card.id === newCard.id ? newCard : card
                 })
             })
-            this.cards = newCards
+            this.cardsPlayed = newCards
         }
     },
     created() {
-        this.cards = tens.initCards
+        this.cardsPlayed = tens.initCards
     }
 })
 </script>
@@ -124,7 +96,7 @@ export default Vue.extend({
     }
 }
 
-@media screen and (max-width: 860px) {
+@media screen and (max-width: 768px) {
     .card {
         width: 4em;
     }
