@@ -67,6 +67,13 @@ export default Vue.extend({
     }
 }
 
+.card-name {
+    position: relative;
+    top: -150px;
+    right: 50px;
+    font-size: 1.2em;
+}
+
 .card-wrapper {
     display: flex;
     position: relative;

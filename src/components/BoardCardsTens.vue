@@ -37,25 +37,14 @@ export default Vue.extend({
                 this.filterFlush(this.cardsPlayed, 3)
             ]
         }
-        // spadesPlayed(): Card[] {
-        //     return this.filterFlush(this.cardsPlayed, 1)
-        // },
-        // diamondsPlayed(): Card[] {
-        //     return this.filterFlush(this.cardsPlayed, 2)
-        // },
-        // heartsPlayed(): Card[] {
-        //     return this.filterFlush(this.cardsPlayed, 3)
-        // }
     },
     methods: {
         filterFlush(cards: Card[], flush: number): Card[] {
             return cards.filter(card => card.flush === flush)
-        }
-    },
-    watch: {
-        alreadyPlayedCards(cardsPlayed: Card[]) {
+        },
+        addNewCards(cards: Card[]): void {
             let newCards = this.cardsPlayed
-            cardsPlayed.forEach(newCard => {
+            cards.forEach(newCard => {
                 newCards = newCards.map(card => {
                     return card.id === newCard.id ? newCard : card
                 })
@@ -63,8 +52,14 @@ export default Vue.extend({
             this.cardsPlayed = newCards
         }
     },
+    watch: {
+        alreadyPlayedCards(value: Card[]) {
+            this.addNewCards(value)
+        }
+    },
     created() {
         this.cardsPlayed = tens.initCards
+        this.addNewCards(this.alreadyPlayedCards)
     }
 })
 </script>

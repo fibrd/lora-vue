@@ -7,7 +7,7 @@
             :src="boardCard.src"
             :class="{
                 blank: isBlank(boardCard.src),
-                highlighted: currentLoser === boardCard.sortId
+                highlighted: isHighlighted(index)
             }"
             class="board-card"
         />
@@ -16,6 +16,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapState } from 'vuex'
 import { Card, BoardCard } from '@/types'
 
 export default Vue.extend({
@@ -30,6 +31,7 @@ export default Vue.extend({
         }
     },
     computed: {
+        ...mapState(['mode']),
         sortedBoard() {
             const sortedBoard = [] as BoardCard[]
 
@@ -46,6 +48,9 @@ export default Vue.extend({
     methods: {
         isBlank(src: string): boolean {
             return src === this.srcBlank
+        },
+        isHighlighted(index: number): boolean {
+            return index === this.currentLoser && this.mode !== 5
         }
     }
 })

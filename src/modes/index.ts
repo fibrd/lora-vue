@@ -214,9 +214,15 @@ export const quarters = {
         return score
     },
 
+    canInitCard(card: Card, playersCards: Card[]): boolean {
+        return (
+            card.value < 5 || playersCards.find(c => c.value < 5) === undefined
+        )
+    },
+
     canPlayCard(card: Card, initCard: Card): boolean {
         return (
-            card.value > initCard.value &&
+            card.value >= initCard.value &&
             card.value - initCard.value <= 3 &&
             card.flush === initCard.flush
         )
@@ -297,6 +303,11 @@ export const tens = {
  * GENERAL RULES FOR MORE GAME MODES
  */
 export const general = {
+    isFlushValid(card: Card, playerCards: Card[], initCard: Card): boolean {
+        // finds any player's card with flush equals to the initializing one
+        const anyFlushCard = playerCards.find(c => c.flush === initCard.flush)
+        return card.flush === initCard.flush || anyFlushCard === undefined
+    },
     noCardsCheck(playersCards: Card[][]): boolean {
         const anyoneWithNoCards = playersCards.find(
             player => player.length === 0
