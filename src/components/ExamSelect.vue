@@ -1,7 +1,9 @@
 <template>
     <form>
         <select id="exam-select" @input="$emit('examPicked', $event)">
-            <option disabled selected value> -- Vyberte si hru -- </option>
+            <option disabled selected value>
+                -- Vyberte si hru --
+            </option>
             <option
                 v-for="n in gameModes.length"
                 :key="n"
@@ -17,17 +19,26 @@
 <script lang="ts">
 import Vue from 'vue'
 import { general } from '@/modes'
+import { mapState } from 'vuex'
 
 export default Vue.extend({
-    props: {
-        examAttempt: Number
-    },
     computed: {
+        ...mapState(['examAttempt']),
         gameModes() {
             return general.listOfGameModes
+        }
+    },
+    watch: {
+        examAttempt(value) {
+            console.log(value)
         }
     }
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+select#exam-select {
+    position: relative;
+    z-index: 10;
+}
+</style>

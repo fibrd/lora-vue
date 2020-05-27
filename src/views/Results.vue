@@ -11,13 +11,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(mode, index) in listModes" :key="index">
-                    <td v-show="totalScore[index]">{{ mode }}</td>
-                    <td
-                        v-for="(points, i) in totalScore[index]"
-                        :key="i"
-                        class="td-points"
-                    >
+                <tr v-for="(item, index) in totalScore" :key="index">
+                    <td>{{ item.mode }}</td>
+                    <td v-for="(points, index) in item.score" :key="index">
                         {{ points }}
                     </td>
                 </tr>

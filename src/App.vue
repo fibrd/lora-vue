@@ -496,11 +496,19 @@ export default Vue.extend({
             if (this.currentScore[this.thalia] > 0) {
                 this.currentScore.fill(0)
                 this.currentScore[this.thalia] = 8
-                this.updateScore(this.currentScore)
+                this.updateScore({
+                    gameMode: `Maturita ${this.examAttempt}`,
+                    score: this.currentScore
+                })
+
                 if (this.examAttempt < 3) this.setGame(7)
                 else this.nextThalia()
             } else {
                 // examination passed
+                this.updateScore({
+                    gameMode: `Maturita ${this.examAttempt}`,
+                    score: this.currentScore
+                })
                 this.nextThalia()
             }
         },
@@ -538,7 +546,10 @@ export default Vue.extend({
             if (this.examination) {
                 this.examinate()
             } else {
-                this.updateScore(this.currentScore)
+                this.updateScore({
+                    gameMode: this.gameMode,
+                    score: this.currentScore
+                })
                 this.nextGameMode()
             }
 
@@ -550,13 +561,6 @@ export default Vue.extend({
             if (this.thalia === 3) this.gameOver()
             this.setGame(0)
             this.setThalia(this.thalia + 1)
-            if (this.examAttempt === 1 || this.examAttempt === 2) {
-                // if examination is done earlier it fills the vacant fields
-                this.updateScore(this.currentScore)
-                for (let i = 0; i <= 2 - this.examAttempt; i++) {
-                    this.updateScore([0, 0, 0, 0])
-                }
-            }
             this.turnOffExam()
         },
         resetGameStats(): void {

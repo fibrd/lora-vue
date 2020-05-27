@@ -1,24 +1,12 @@
-# lora-vue
+# Lóra
 
-## Project setup
-```
-npm install
-```
+Tvorba projektu karetní hry Lóra, populární na Kladensku. [Wikipedie](https://cs.wikipedia.org/wiki/L%C3%B3ra).
+Frontend aplikace vyvíjen ve Vue.js.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Popis Hry
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Hra probíhá čtyřkolově v předem určeném pořadí (viz. Pravidla hry). Uživatel hraje proti třem soupeřům ovládaným umělou inteligencí na základě jednoduchých algoritmů. Cílem hry je dosáhnout co možná nejnižšího počtu trestných bodů.
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Webpage
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Ukázka Single Page Aplikace k nahlédnutí zde: [Karty Lóra](https://karty.tk).

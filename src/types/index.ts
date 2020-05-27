@@ -10,3 +10,8 @@ export interface BoardCard {
     src: string
     sortId: number
 }
+
+export interface TotalScore {
+    gameMode: string
+    score: number[]
+}

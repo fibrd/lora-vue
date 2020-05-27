@@ -53,14 +53,18 @@ export default new Vuex.Store({
         setTimeOut({ commit }, timeOut) {
             commit('SET_TIME_OUT', timeOut)
         },
-        updateScore({ state, commit }, score) {
+        updateScore({ state, commit }, { score, gameMode }) {
             const totalScoreLen = state.totalScore.length
             const updatedScore =
                 totalScoreLen > 0
-                    ? state.totalScore[totalScoreLen - 1].map(
-                          (points, index) => points + score[index]
-                      )
-                    : score
+                    ? {
+                          mode: gameMode,
+                          score: state.totalScore[totalScoreLen - 1].score.map(
+                              (points: number, index: number) =>
+                                  points + score[index]
+                          )
+                      }
+                    : { mode: gameMode, score: score }
             commit('UPDATE_SCORE', [...state.totalScore, updatedScore])
         },
         nextGameMode({ commit }) {

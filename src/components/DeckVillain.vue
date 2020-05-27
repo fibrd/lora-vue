@@ -39,6 +39,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .card {
+    width: 4.5em;
     display: flex;
     position: absolute;
     border: 1px currentColor solid;
@@ -101,16 +102,16 @@ export default Vue.extend({
 @media screen and (max-width: 768px) {
     .card-wrapper {
         &:nth-child(1) {
-            top: 5em;
+            top: 6em;
         }
         &:nth-child(3) {
-            top: 5em;
+            top: 6em;
         }
     }
 }
 @media screen and (max-width: 460px) {
     .card {
-        width: 3.5em;
+        width: 3.4em;
     }
 }
 </style>

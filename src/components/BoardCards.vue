@@ -68,7 +68,7 @@ export default Vue.extend({
     position: relative;
     min-height: 18em;
     max-width: 18em;
-    margin: 0 auto 4em;
+    margin: 1em auto 4em;
 }
 
 .board-card {

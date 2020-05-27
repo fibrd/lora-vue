@@ -66,6 +66,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .flush-wrapper {
+    width: 100%;
     display: flex;
     justify-content: center;
     position: relative;
@@ -93,7 +94,7 @@ export default Vue.extend({
 
 @media screen and (max-width: 768px) {
     .card {
-        width: 4em;
+        width: 4.5em;
     }
     @for $i from 1 through 4 {
         .flush-wrapper:nth-child(#{$i}) {
@@ -102,7 +103,7 @@ export default Vue.extend({
     }
     @for $i from 1 through 8 {
         .card:nth-child(#{$i}) {
-            left: 4.5em - $i * 1em;
+            left: $i * -1em + 6em;
         }
     }
 }
