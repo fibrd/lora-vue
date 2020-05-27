@@ -98,12 +98,23 @@ export default Vue.extend({
     }
     @for $i from 1 through 4 {
         .flush-wrapper:nth-child(#{$i}) {
-            top: $i * -2em + 5em;
+            top: $i * -3em + 8em;
         }
     }
     @for $i from 1 through 8 {
         .card:nth-child(#{$i}) {
             left: $i * -1em + 6em;
+        }
+    }
+}
+
+@media screen and (max-width: 460px) {
+    .card {
+        width: 3.5em;
+    }
+    @for $i from 1 through 4 {
+        .flush-wrapper:nth-child(#{$i}) {
+            top: $i * -1.5em + 3em;
         }
     }
 }

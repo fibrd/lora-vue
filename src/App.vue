@@ -295,6 +295,9 @@ export default Vue.extend({
                     case 1:
                         currentCard = queens.villainInitCard(sortedDeck)
                         break
+                    case 2:
+                        currentCard = fila.villainInitCard(sortedDeck)
+                        break
                     case 4:
                         currentCard = king.villainInitCard(sortedDeck)
                         break
@@ -315,7 +318,7 @@ export default Vue.extend({
             }
 
             // filtering players cards w/ the same flush
-            const eligeableCards = playerCards.filter(
+            const eligeableCards = sortedDeck.filter(
                 c => c.flush === this.initCard.flush
             ) as Card[]
 
@@ -328,23 +331,23 @@ export default Vue.extend({
             switch (this.mode) {
                 case 0:
                     currentCards = hearts.villainReactCard(
-                        playerCards,
+                        sortedDeck,
                         eligeableCards,
-                        this.initCard
+                        this.boardCards
                     )
                     break
                 case 1:
                     currentCards = queens.villainReactCard(
                         sortedDeck,
                         eligeableCards,
-                        this.initCard
+                        this.boardCards
                     )
                     break
                 case 4:
                     currentCards = king.villainReactCard(
                         sortedDeck,
                         eligeableCards,
-                        this.initCard
+                        this.boardCards
                     )
                     break
                 case 5:
@@ -364,7 +367,7 @@ export default Vue.extend({
                     currentCards = any.villainReactCard(
                         sortedDeck,
                         eligeableCards,
-                        this.initCard
+                        this.boardCards
                     )
                     break
             }

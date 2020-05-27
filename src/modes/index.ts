@@ -29,18 +29,22 @@ export const hearts = {
     // if filtered cards turns any lower one than the init card
     // otherwise turns a card
     villainReactCard(
-        cards: Card[],
+        sortedDeck: Card[],
         eligeableCards: Card[],
-        initCard: Card
+        BoardCards: Card[]
     ): Card[] {
         let currentCard
+        const lowerCards = eligeableCards.filter(
+            c => c.value < Math.max(...BoardCards.map(c => c.value))
+        )
         // if any eligeable card is available
-        if (eligeableCards.length) {
-            currentCard = eligeableCards.find(c => c.value < initCard.value)
+        if (lowerCards.length) {
+            currentCard = lowerCards[lowerCards.length - 1]
             // if there are some filtered cards with no lower value but the bigger one
-            currentCard = currentCard ? currentCard : eligeableCards[0]
+        } else if (eligeableCards.length) {
+            currentCard = eligeableCards[0]
         } else {
-            currentCard = cards[0]
+            currentCard = sortedDeck[sortedDeck.length - 1]
         }
         return [currentCard]
     }
@@ -68,14 +72,18 @@ export const queens = {
     villainReactCard(
         sortedDeck: Card[],
         eligeableCards: Card[],
-        initCard: Card
+        BoardCards: Card[]
     ): Card[] {
         let currentCard
+        const lowerCards = eligeableCards.filter(
+            c => c.value < Math.max(...BoardCards.map(c => c.value))
+        )
         // if any eligeable card is available
-        if (eligeableCards.length) {
-            currentCard = eligeableCards.find(c => c.value < initCard.value)
+        if (lowerCards.length) {
+            currentCard = lowerCards[lowerCards.length - 1]
             // if there are some filtered cards with no lower value but the bigger one
-            currentCard = currentCard ? currentCard : eligeableCards[0]
+        } else if (eligeableCards.length) {
+            currentCard = eligeableCards[0]
         } else {
             currentCard = sortedDeck[sortedDeck.length - 1]
         }
@@ -96,7 +104,10 @@ export const fila = {
 
     // returns villains init card to turn
     villainInitCard(sortedDeck: Card[]): Card {
-        return sortedDeck[0]
+        const cardsCount = sortedDeck.length
+        return cardsCount !== 8 && cardsCount > 3
+            ? sortedDeck[cardsCount - 1]
+            : sortedDeck[0]
     },
 
     // if filtered cards turns any lower one than the init card
@@ -104,14 +115,18 @@ export const fila = {
     villainReactCard(
         sortedDeck: Card[],
         eligeableCards: Card[],
-        initCard: Card
+        BoardCards: Card[]
     ): Card[] {
         let currentCard
+        const lowerCards = eligeableCards.filter(
+            c => c.value < Math.max(...BoardCards.map(c => c.value))
+        )
         // if any eligeable card is available
-        if (eligeableCards.length) {
-            currentCard = eligeableCards.find(c => c.value < initCard.value)
+        if (lowerCards.length) {
+            currentCard = lowerCards[lowerCards.length - 1]
             // if there are some filtered cards with no lower value but the bigger one
-            currentCard = currentCard ? currentCard : eligeableCards[0]
+        } else if (eligeableCards.length) {
+            currentCard = eligeableCards[0]
         } else {
             currentCard = sortedDeck[sortedDeck.length - 1]
         }
@@ -140,14 +155,18 @@ export const any = {
     villainReactCard(
         sortedDeck: Card[],
         eligeableCards: Card[],
-        initCard: Card
+        BoardCards: Card[]
     ): Card[] {
         let currentCard
+        const lowerCards = eligeableCards.filter(
+            c => c.value < Math.max(...BoardCards.map(c => c.value))
+        )
         // if any eligeable card is available
-        if (eligeableCards.length) {
-            currentCard = eligeableCards.find(c => c.value < initCard.value)
+        if (lowerCards.length) {
+            currentCard = lowerCards[lowerCards.length - 1]
             // if there are some filtered cards with no lower value but the bigger one
-            currentCard = currentCard ? currentCard : eligeableCards[0]
+        } else if (eligeableCards.length) {
+            currentCard = eligeableCards[0]
         } else {
             currentCard = sortedDeck[sortedDeck.length - 1]
         }
@@ -184,7 +203,7 @@ export const king = {
     villainReactCard(
         sortedDeck: Card[],
         eligeableCards: Card[],
-        initCard: Card
+        BoardCards: Card[]
     ): Card[] {
         // the very first turn is not allowed to play the red queen
         sortedDeck =
@@ -192,11 +211,15 @@ export const king = {
                 ? sortedDeck.filter(c => c.id !== 31)
                 : sortedDeck
         let currentCard
+        const lowerCards = eligeableCards.filter(
+            c => c.value < Math.max(...BoardCards.map(c => c.value))
+        )
         // if any eligeable card is available
-        if (eligeableCards.length) {
-            currentCard = eligeableCards.find(c => c.value < initCard.value)
+        if (lowerCards.length) {
+            currentCard = lowerCards[lowerCards.length - 1]
             // if there are some filtered cards with no lower value but the bigger one
-            currentCard = currentCard ? currentCard : eligeableCards[0]
+        } else if (eligeableCards.length) {
+            currentCard = eligeableCards[0]
         } else {
             currentCard = sortedDeck[sortedDeck.length - 1]
         }
