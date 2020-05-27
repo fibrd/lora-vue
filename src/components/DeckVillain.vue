@@ -113,5 +113,11 @@ export default Vue.extend({
     .card {
         width: 3.4em;
     }
+    .card-wrapper {
+        &:nth-child(1),
+        &:nth-child(3) {
+            top: 4em;
+        }
+    }
 }
 </style>

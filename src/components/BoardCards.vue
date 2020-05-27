@@ -66,7 +66,7 @@ export default Vue.extend({
     align-items: center;
     justify-content: center;
     position: relative;
-    min-height: 18em;
+    min-height: 19em;
     max-width: 18em;
     margin: 1em auto 4em;
 }
@@ -114,13 +114,12 @@ export default Vue.extend({
 @media screen and (max-width: 768px) {
     .board-wrapper {
         margin-bottom: 3em;
-        min-height: 18em;
         top: -0.5em;
     }
 }
 @media screen and (max-width: 460px) {
     .board-wrapper {
-        min-height: 12em;
+        min-height: 12.5em;
         width: 12em;
         position: relative;
         top: -3em;
@@ -129,10 +128,6 @@ export default Vue.extend({
     .board-card {
         margin: 0.2em;
         width: 3.5em;
-        &:nth-child(1),
-        &:nth-child(3) {
-            align-self: flex-end;
-        }
         &:nth-child(4) {
             z-index: 100;
             left: intend-card(12, 3.5, 0.2);
