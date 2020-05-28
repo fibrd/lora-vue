@@ -15,13 +15,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapState } from 'vuex'
 import { Card } from '@/types'
 import { tens } from '@/modes'
 
 export default Vue.extend({
-    props: {
-        alreadyPlayedCards: Array as () => Card[]
-    },
     data() {
         return {
             cardsPlayed: [] as Card[],
@@ -29,6 +27,7 @@ export default Vue.extend({
         }
     },
     computed: {
+        ...mapState(['alreadyPlayedCards']),
         flushSortedCards(): Card[][] {
             return [
                 this.filterFlush(this.cardsPlayed, 0),

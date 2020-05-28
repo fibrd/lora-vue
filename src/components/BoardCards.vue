@@ -17,21 +17,16 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapState } from 'vuex'
-import { Card, BoardCard } from '@/types'
+import { BoardCard } from '@/types'
 
 export default Vue.extend({
-    props: {
-        boardCards: Array as () => Card[],
-        initPlayer: Number,
-        currentLoser: Number
-    },
     data() {
         return {
             srcBlank: './assets/cards/blank.png'
         }
     },
     computed: {
-        ...mapState(['mode']),
+        ...mapState(['mode', 'boardCards', 'initPlayer', 'currentLoser']),
         sortedBoard() {
             const sortedBoard = [] as BoardCard[]
 

@@ -9,6 +9,34 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state,
     mutations: {
+        SET_PLAYERS_CARDS(state, cards) {
+            state.playersCards = cards
+        },
+        SET_ALREADY_PLAYED_CARDS(state, cards) {
+            state.alreadyPlayedCards = cards
+        },
+        SET_HERO_CAN_ACT(state, bool) {
+            state.heroCanAct = bool
+        },
+        SET_BOARD_CARDS(state, cards) {
+            state.boardCards = cards
+        },
+        SET_INIT_CARD(state, card) {
+            state.initCard = card
+        },
+        SET_INIT_PLAYER(state, player) {
+            state.initPlayer = player
+        },
+        SET_CURRENT_LOSER(state, loser) {
+            state.currentLoser = loser
+        },
+        SET_CURRENT_SCORE(state, score) {
+            state.currentScore = score
+        },
+        SET_TENS_PLAYED(state, bool) {
+            state.tensPlayed = bool
+        },
+
         SET_PLAYER_NAME(state, name) {
             state.playerName = name
         },
@@ -44,6 +72,33 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        setPlayersCards({ commit }, cards) {
+            commit('SET_PLAYERS_CARDS', cards)
+        },
+        setAlreadyPlayedCards({ commit }, cards) {
+            commit('SET_ALREADY_PLAYED_CARDS', cards)
+        },
+        setHeroCanAct({ commit }, bool) {
+            commit('SET_HERO_CAN_ACT', bool)
+        },
+        setBoardCards({ commit }, cards) {
+            commit('SET_BOARD_CARDS', cards)
+        },
+        setInitCard({ commit }, card) {
+            commit('SET_INIT_CARD', card)
+        },
+        setInitPlayer({ commit }, player) {
+            commit('SET_INIT_PLAYER', player)
+        },
+        setCurrentLoser({ commit }, loser) {
+            commit('SET_CURRENT_LOSER', loser)
+        },
+        setCurrentScore({ commit }, score) {
+            commit('SET_CURRENT_SCORE', score)
+        },
+        setTensPlayed({ commit }, bool) {
+            commit('SET_TENS_PLAYED', bool)
+        },
         setVillainsNames({ commit }, names) {
             commit('SET_VILLAINS_NAMES', names)
         },

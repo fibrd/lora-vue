@@ -1,6 +1,6 @@
 <template>
     <form>
-        <select id="exam-select" @input="$emit('examPicked', $event)">
+        <select id="exam-select" @input="examPicked($event)">
             <option disabled selected value>
                 -- Vyberte si hru --
             </option>
@@ -19,13 +19,20 @@
 <script lang="ts">
 import Vue from 'vue'
 import { general } from '@/modes'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default Vue.extend({
     computed: {
         ...mapState(['examAttempt']),
         gameModes() {
             return general.listOfGameModes
+        }
+    },
+    methods: {
+        ...mapActions(['setGame']),
+        // eslint-disable-next-line
+        examPicked(event: any) {
+            this.setGame(event.target.value)
         }
     },
     watch: {

@@ -11,23 +11,14 @@
                 <deck-villain
                     v-for="index in 3"
                     :key="index"
-                    :highlighted="initPlayer === index - 1"
-                    :villainCards="playersCards[index - 1]"
                     :villain="index - 1"
-                    :currentScore="currentScore"
                 />
             </div>
-            <exam-select v-if="mode === 7" @examPicked="examPicked($event)" />
-            <board-cards
-                v-if="!isTens"
-                :currentLoser="currentLoser"
-                :boardCards="boardCards"
-                :initPlayer="initPlayer"
-            />
-            <board-cards-tens v-else :alreadyPlayedCards="alreadyPlayedCards" />
+            <exam-select v-if="mode === 7" />
+            <board-cards v-if="!isTens" />
+            <board-cards-tens v-else />
             <deck-hero
                 :heroCards="playersCards[3]"
-                :currentScore="currentScore[3]"
                 @cardTurned="heroTurn($event)"
             />
             <div class="button-container" v-show="heroCanAct">
@@ -93,22 +84,17 @@ export default Vue.extend({
         BoardCardsTens,
         ExamSelect
     },
-    data() {
-        return {
-            alreadyPlayedCards: [] as Card[],
-            boardCards: [] as Card[],
-            playersCards: [] as Card[][],
-            initCard: {} as Card,
-            initPlayer: 0,
-            heroCanAct: true,
-            currentScore: [0, 0, 0, 0],
-            currentLoser: -1,
-            tensPlayed: false,
-            timer: 0
-        }
-    },
     computed: {
         ...mapState([
+            'alreadyPlayedCards',
+            'boardCards',
+            'playersCards',
+            'initCard',
+            'initPlayer',
+            'heroCanAct',
+            'currentScore',
+            'currentLoser',
+            'tensPlayed',
             'cards',
             'mode',
             'timeOut',
@@ -129,6 +115,15 @@ export default Vue.extend({
     },
     methods: {
         ...mapActions([
+            'setPlayersCards',
+            'setAlreadyPlayedCards',
+            'setHeroCanAct',
+            'setBoardCards',
+            'setInitCard',
+            'setInitPlayer',
+            'setCurrentLoser',
+            'setCurrentScore',
+            'setTensPlayed',
             'setVillainsNames',
             'updateScore',
             'turnOnExam',
@@ -150,12 +145,7 @@ export default Vue.extend({
         // shuffles up & deals
         initCards(): void {
             const chunkedDeck = this.getChunkedDeck()
-            this.playersCards = [
-                [...chunkedDeck[0]],
-                [...chunkedDeck[1]],
-                [...chunkedDeck[2]],
-                [...chunkedDeck[3]]
-            ]
+            this.setPlayersCards(chunkedDeck)
         },
         // called after the hero makes any move
         heroTurn(card: Card) {
@@ -169,27 +159,28 @@ export default Vue.extend({
             if (!this.isCardValid(card)) return
 
             // disables hero moves for a moment
-            this.heroCanAct = false
+            this.setHeroCanAct(false)
 
             // deletes selected card out of hero's deck
-            this.playersCards[3] = this.playersCards[3].filter(c => c !== card)
+            const playersCards = this.playersCards as Card[][]
+            playersCards[3] = playersCards[3].filter(c => c !== card)
+            this.setPlayersCards(playersCards)
 
             // adding selected card to the board
-            this.boardCards = [...this.boardCards, card]
+            const boardCards = [...this.boardCards, card] as Card[]
+            this.setBoardCards(boardCards)
 
             // all the modes except for tens
             if (this.mode < 6) {
                 //setting up the new init card
-                this.initCard = this.boardCards[0]
+                this.setInitCard(this.boardCards[0])
                 // all the modes except for tens and quarters
                 if (this.mode < 5) {
                     // opponents make their reaction turns
                     this.allVillainsReact(this.boardCards.length)
                     // appointing loser of the current game
                     if (card.flush === this.initCard.flush) {
-                        this.currentLoser = this.isLoser(card.value)
-                            ? 3
-                            : this.currentLoser
+                        if (this.isLoser(card.value)) this.setCurrentLoser(3)
                     }
 
                     // recalculates current state of score
@@ -267,8 +258,8 @@ export default Vue.extend({
                 const marginIndex = (i + this.initPlayer) % 4
                 this.villainTurn(marginIndex)
             }
-            this.heroCanAct = true
-            if (this.isQuarters && this.currentLoser !== 3) this.quartersNext()
+            this.setHeroCanAct(true)
+            if (this.isQuarters && this.initPlayer !== 3) this.quartersNext()
         },
         allVillainsReact(boardLen: number): void {
             const maxBoardLen = 4
@@ -306,13 +297,15 @@ export default Vue.extend({
                         currentCard = any.villainInitCard(sortedDeck)
                         break
                 }
-                this.initCard = currentCard
+                this.setInitCard(currentCard)
 
                 if (!this.isQuarters) {
-                    this.boardCards = [currentCard]
-                    this.playersCards[villain] = playerCards.filter(
+                    this.setBoardCards([currentCard])
+                    const playersCards = this.playersCards as Card[][]
+                    playersCards[villain] = playersCards[villain].filter(
                         c => c !== currentCard
                     )
+                    this.setPlayersCards(playersCards)
                     return
                 }
             }
@@ -323,8 +316,8 @@ export default Vue.extend({
             ) as Card[]
 
             // in case the current loser is not set (the very first turn of any game mode)
-            this.currentLoser =
-                this.currentLoser >= 0 ? this.currentLoser : this.initPlayer
+            if (this.currentLoser < 0) this.setCurrentLoser(this.initPlayer)
+
             let currentCards = [] as Card[]
 
             // villain is reacting specifically according to the particular game mode
@@ -377,18 +370,18 @@ export default Vue.extend({
                 const currentMaxValue = Math.max(
                     ...currentCards.map(c => c.value)
                 )
-                this.currentLoser = this.isLoser(currentMaxValue)
-                    ? villain
-                    : this.currentLoser
+                if (this.isLoser(currentMaxValue)) this.setCurrentLoser(villain)
             }
 
             // if any card or more cards were moved add them to the board
             // and deletes from player's deck
             if (currentCards.length) {
-                this.boardCards = [...this.boardCards, ...currentCards]
-                this.playersCards[villain] = playerCards.filter(
+                this.setBoardCards([...this.boardCards, ...currentCards])
+                const playersCards = this.playersCards as Card[][]
+                playersCards[villain] = playersCards[villain].filter(
                     c => !currentCards.includes(c)
                 )
+                this.setPlayersCards(playersCards)
             } else if (this.isTens) {
                 // if no cards could been taken and game mode is tens
                 this.tensKnock(villain)
@@ -396,8 +389,8 @@ export default Vue.extend({
         },
         isLoser(value: number): boolean {
             const boardEligeable = this.boardCards.filter(
-                c => c.flush === this.initCard.flush
-            )
+                (c: Card) => c.flush === this.initCard.flush
+            ) as Card[]
             // gets value of the current losing board card
             const boardMaxValue = Math.max(...boardEligeable.map(c => c.value))
             return value >= boardMaxValue
@@ -431,8 +424,8 @@ export default Vue.extend({
                     score = any.score(this.boardCards, this.currentLoser)
                     break
             }
-            this.currentScore = score.map(
-                (pts, index) => pts + this.currentScore[index]
+            this.setCurrentScore(
+                score.map((pts, index) => pts + this.currentScore[index])
             )
         },
         quartersNext(): void {
@@ -446,8 +439,8 @@ export default Vue.extend({
             this.nextTurn()
         },
         tensMoved(): void {
-            this.tensPlayed = true
-            this.heroCanAct = true
+            this.setTensPlayed(true)
+            this.setHeroCanAct(true)
             this.noCardsCheck()
         },
         tensNext(): void {
@@ -456,7 +449,7 @@ export default Vue.extend({
                 this.villainTurn(i)
                 this.noCardsCheck()
             }
-            this.tensPlayed = false
+            this.setTensPlayed(false)
         },
         tensKnock(player: number): void {
             if (
@@ -465,8 +458,10 @@ export default Vue.extend({
                     this.alreadyPlayedCards
                 )
             ) {
-                this.currentScore = this.currentScore.map((pts, index) =>
-                    index === player ? pts + 1 : pts
+                this.setCurrentScore(
+                    this.currentScore.map((pts: number, index: number) =>
+                        index === player ? pts + 1 : pts
+                    )
                 )
                 if (player === 3) this.tensNext()
             } else {
@@ -476,20 +471,22 @@ export default Vue.extend({
         noCardsCheck(): void {
             if (general.noCardsCheck(this.playersCards)) {
                 this.calculatePoints()
-                this.heroCanAct = false
+                this.setHeroCanAct(false)
 
-                this.timer = setTimeout(() => {
-                    window.clearTimeout(this.timer)
+                const timer = setTimeout(() => {
+                    window.clearTimeout(timer)
                     this.nextGame()
                 }, this.timeOut)
             }
         },
         giveUp(): void {
             if (window.confirm('Chcete hru dobrovolně vzdát?')) {
-                this.currentScore[3] =
-                    this.currentScore[3] +
-                    8 -
-                    this.currentScore.reduce((score, sum) => sum + score)
+                const pointsReached = this.currentScore.reduce(
+                    (score: number, sum: number) => sum + score
+                )
+                const currentScore = this.currentScore
+                currentScore[3] = currentScore[3] + 8 - pointsReached
+                this.setCurrentScore(currentScore)
 
                 this.nextGame()
             }
@@ -515,37 +512,34 @@ export default Vue.extend({
                 this.nextThalia()
             }
         },
-        // eslint-disable-next-line
-        examPicked(event: any) {
-            this.setGame(event.target.value)
-        },
         nextTurn(): void {
-            this.timer = setTimeout(() => {
-                window.clearTimeout(this.timer)
+            const timer = setTimeout(() => {
+                window.clearTimeout(timer)
                 // setting up the new init player
-                this.initPlayer = this.currentLoser
+                this.setInitPlayer(this.currentLoser)
 
                 // resets data after timeout
-                this.boardCards = []
+                this.setBoardCards([])
 
                 // initializes opponents turn only if hero has cards
                 // and the score has not reached its top yet
-                if (
-                    this.playersCards[3].length &&
-                    this.currentScore.reduce((score, sum) => sum + score) !== 8
-                ) {
+                const pointsReached = this.currentScore.reduce(
+                    (score: number, sum: number) => sum + score
+                )
+                if (this.playersCards[3].length && pointsReached !== 8) {
                     if (!this.isQuarters) {
                         this.allVillainsInit()
-                        this.heroCanAct = true
+                        this.setHeroCanAct(true)
                     } else if (this.initPlayer !== 3) {
                         this.quartersNext()
-                    } else this.heroCanAct = true
+                    } else this.setHeroCanAct(true)
                 } else {
                     this.nextGame()
                 }
             }, this.timeOut)
         },
         nextGame(): void {
+            console.log(this.heroCanAct)
             if (this.examination) {
                 this.examinate()
             } else {
@@ -567,12 +561,12 @@ export default Vue.extend({
             this.turnOffExam()
         },
         resetGameStats(): void {
-            this.currentScore = [0, 0, 0, 0]
-            this.initPlayer = this.thalia
-            this.alreadyPlayedCards = []
-            this.initCard = {} as Card
-            this.boardCards = []
-            this.heroCanAct = this.thalia === 3
+            this.setCurrentScore([0, 0, 0, 0])
+            this.setInitPlayer(this.thalia)
+            this.setAlreadyPlayedCards([])
+            this.setInitCard({} as Card)
+            this.setBoardCards([])
+            this.setHeroCanAct(this.thalia === 3)
         },
         gameOver(): void {
             window.alert('Game is over!')
@@ -582,11 +576,13 @@ export default Vue.extend({
     watch: {
         boardCards(cards: Card[]) {
             if (cards.length > 0)
-                cards.forEach(c => this.alreadyPlayedCards.push(c))
+                cards.forEach(c =>
+                    this.setAlreadyPlayedCards([...this.alreadyPlayedCards, c])
+                )
         },
         mode(value: number) {
             if (value === 7) {
-                this.heroCanAct = false
+                this.setHeroCanAct(false)
                 this.setExamAttempt(this.examAttempt + 1)
 
                 this.turnOnExam()

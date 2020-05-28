@@ -4,11 +4,11 @@
             <h5>{{ villainsNames[villain] }} ({{ currentScore[villain] }})</h5>
         </div>
         <img
-            v-for="n in villainCards.length"
+            v-for="n in playersCards[villain].length"
             :key="n"
             :src="cardBackSrc"
             alt="back"
-            :class="{ highlighted: highlighted }"
+            :class="{ highlighted: highlighted() }"
             class="card"
         />
     </div>
@@ -17,14 +17,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapState } from 'vuex'
-import { Card } from '@/types'
 
 export default Vue.extend({
     props: {
-        villainCards: Array as () => Card[],
-        highlighted: Boolean,
-        villain: Number,
-        currentScore: Array
+        villain: Number
     },
     data() {
         return {
@@ -32,7 +28,17 @@ export default Vue.extend({
         }
     },
     computed: {
-        ...mapState(['villainsNames'])
+        ...mapState([
+            'villainsNames',
+            'initPlayer',
+            'currentScore',
+            'playersCards'
+        ])
+    },
+    methods: {
+        highlighted(): boolean {
+            return this.villain === this.initPlayer
+        }
     }
 })
 </script>

@@ -1,18 +1,18 @@
 <template>
     <div class="hero-wrapper">
         <div class="player-name">
-            <h5>{{ playerName }} ({{ currentScore }})</h5>
+            <h5>{{ playerName }} ({{ heroScore }})</h5>
         </div>
-        <transition-group name="turned" class="card-wrapper">
+        <div class="card-wrapper">
             <img
                 v-for="card in sortedCards"
-                :key="card.id"
+                :key="card.src"
                 class="card"
                 :src="card.src"
                 :alt="card.name"
                 @click="$emit('cardTurned', card)"
             />
-        </transition-group>
+        </div>
     </div>
 </template>
 
@@ -24,16 +24,18 @@ import { sortBy } from 'lodash-es'
 
 export default Vue.extend({
     props: {
-        heroCards: Array as () => Card[],
-        currentScore: {
-            type: Number,
-            default: 0
+        heroCards: {
+            type: Array as () => Card[]
         }
     },
     computed: {
-        ...mapState(['playerName']),
+        ...mapState(['playerName', 'currentScore']),
+        heroScore(): number {
+            return this.currentScore[3]
+        },
         sortedCards(): Card[] {
-            return sortBy(this.heroCards, ['id'])
+            const sortedCards = sortBy(this.heroCards, ['id'])
+            return sortedCards
         }
     }
 })
