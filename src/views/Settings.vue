@@ -19,6 +19,13 @@
                 </option>
             </select>
         </div>
+        <div>
+            <label for="sortingCards">Seřadit karty: </label>
+            <select id="sortingCards" @change="sortingCardsChanged($event)">
+                <option :value="true">ANO</option>
+                <option :value="false" :selected="!sortingCards">NE</option>
+            </select>
+        </div>
     </div>
 </template>
 
@@ -32,12 +39,16 @@ export default Vue.extend({
             name: ''
         }
     },
-    computed: mapState(['playerName', 'timeOut']),
+    computed: mapState(['playerName', 'timeOut', 'sortingCards']),
     methods: {
-        ...mapActions(['setPlayerName', 'setTimeOut']),
+        ...mapActions(['setPlayerName', 'setTimeOut', 'setSortingCards']),
         // eslint-disable-next-line
         timeOutChanged(event: any): void {
             this.setTimeOut(event.target.value)
+        },
+        // eslint-disable-next-line
+        sortingCardsChanged(event: any): void {
+            this.setSortingCards(JSON.parse(event.target.value))
         }
     },
     watch: {

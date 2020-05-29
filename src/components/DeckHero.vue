@@ -5,7 +5,7 @@
         </div>
         <div class="card-wrapper">
             <img
-                v-for="card in sortedCards"
+                v-for="card in cards"
                 :key="card.src"
                 class="card"
                 :src="card.src"
@@ -24,18 +24,20 @@ import { sortBy } from 'lodash-es'
 
 export default Vue.extend({
     props: {
-        heroCards: {
-            type: Array as () => Card[]
-        }
+        heroCards: Array as () => Card[]
     },
     computed: {
-        ...mapState(['playerName', 'currentScore']),
+        ...mapState(['playerName', 'currentScore', 'sortingCards']),
         heroScore(): number {
             return this.currentScore[3]
         },
         sortedCards(): Card[] {
             const sortedCards = sortBy(this.heroCards, ['id'])
             return sortedCards
+        },
+        cards(): Card[] {
+            const cards = this.sortingCards ? this.sortedCards : this.heroCards
+            return cards
         }
     }
 })

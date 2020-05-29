@@ -10,6 +10,7 @@ export default new Vuex.Store({
     state,
     mutations: {
         SET_PLAYERS_CARDS(state, cards) {
+            state.playersCards = []
             state.playersCards = cards
         },
         SET_ALREADY_PLAYED_CARDS(state, cards) {
@@ -35,6 +36,9 @@ export default new Vuex.Store({
         },
         SET_TENS_PLAYED(state, bool) {
             state.tensPlayed = bool
+        },
+        SET_TENS_FINISHED(state, bool) {
+            state.tensFinished = bool
         },
 
         SET_PLAYER_NAME(state, name) {
@@ -69,6 +73,9 @@ export default new Vuex.Store({
         },
         SET_GAME_OVER(state) {
             state.gameIsOver = true
+        },
+        SET_SORTING_CARDS(state, bool) {
+            state.sortingCards = bool
         }
     },
     actions: {
@@ -98,6 +105,9 @@ export default new Vuex.Store({
         },
         setTensPlayed({ commit }, bool) {
             commit('SET_TENS_PLAYED', bool)
+        },
+        setTensFinished({ commit }, bool) {
+            commit('SET_TENS_FINISHED', bool)
         },
         setVillainsNames({ commit }, names) {
             commit('SET_VILLAINS_NAMES', names)
@@ -143,6 +153,9 @@ export default new Vuex.Store({
         },
         setExamAttempt({ commit }, attempt) {
             commit('SET_EXAM_ATTEMPT', +attempt)
+        },
+        setSortingCards({ commit }, bool) {
+            commit('SET_SORTING_CARDS', bool)
         }
     }
 })

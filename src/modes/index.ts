@@ -6,15 +6,15 @@ import store from '@/store'
  */
 export const hearts = {
     // checks if hero can init hearts
-    canInitHeart(card: Card, heroCards: Card[]): boolean {
-        const anyNotHeart = heroCards.find(c => c.flush !== 3)
+    canInitHeart(card: Card): boolean {
+        const anyNotHeart = store.state.playersCards[3].find(c => c.flush !== 3)
         return card.flush !== 3 || !anyNotHeart
     },
 
     // count current score
-    score(boardCards: Card[], currentLoser: number): number[] {
+    score(): number[] {
         const score = [0, 0, 0, 0]
-        score[currentLoser] += boardCards.filter(
+        score[store.state.currentLoser] += store.state.boardCards.filter(
             card => card.flush === 3
         ).length
         return score
@@ -23,19 +23,20 @@ export const hearts = {
     // returns villains init card to turn
     villainInitCard(sortedDeck: Card[]): Card {
         const anyNotHearts = sortedDeck.filter(card => card.flush !== 3)
-        return anyNotHearts.length ? anyNotHearts[0] : sortedDeck[0]
+        const heroCount = store.state.playersCards[3].length
+        const card =
+            heroCount > 6
+                ? anyNotHearts[anyNotHearts.length - 1]
+                : anyNotHearts[0]
+        return anyNotHearts.length ? card : sortedDeck[0]
     },
 
     // if filtered cards turns any lower one than the init card
     // otherwise turns a card
-    villainReactCard(
-        sortedDeck: Card[],
-        eligeableCards: Card[],
-        BoardCards: Card[]
-    ): Card[] {
+    villainReactCard(sortedDeck: Card[], eligeableCards: Card[]): Card[] {
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...BoardCards.map(c => c.value))
+            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
         )
         // if any eligeable card is available
         if (lowerCards.length) {
@@ -55,10 +56,10 @@ export const hearts = {
  */
 export const queens = {
     // count current score
-    score(boardCards: Card[], currentLoser: number): number[] {
+    score(): number[] {
         const score = [0, 0, 0, 0]
-        score[currentLoser] +=
-            boardCards.filter(card => card.value === 5).length * 2
+        score[store.state.currentLoser] +=
+            store.state.boardCards.filter(card => card.value === 5).length * 2
         return score
     },
 
@@ -69,14 +70,10 @@ export const queens = {
 
     // if filtered cards turns any lower one than the init card
     // otherwise turns a card w/ the biggest value
-    villainReactCard(
-        sortedDeck: Card[],
-        eligeableCards: Card[],
-        BoardCards: Card[]
-    ): Card[] {
+    villainReactCard(sortedDeck: Card[], eligeableCards: Card[]): Card[] {
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...BoardCards.map(c => c.value))
+            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
         )
         // if any eligeable card is available
         if (lowerCards.length) {
@@ -96,9 +93,11 @@ export const queens = {
  */
 export const fila = {
     // count current score
-    score(heroCards: number, currentLoser: number): number[] {
+    score(): number[] {
+        const heroCount = store.state.playersCards[3].length
         const score = [0, 0, 0, 0]
-        score[currentLoser] += heroCards === 7 || heroCards === 0 ? 4 : 0
+        score[store.state.currentLoser] +=
+            heroCount === 7 || heroCount === 0 ? 4 : 0
         return score
     },
 
@@ -112,14 +111,10 @@ export const fila = {
 
     // if filtered cards turns any lower one than the init card
     // otherwise turns a card w/ the biggest value
-    villainReactCard(
-        sortedDeck: Card[],
-        eligeableCards: Card[],
-        BoardCards: Card[]
-    ): Card[] {
+    villainReactCard(sortedDeck: Card[], eligeableCards: Card[]): Card[] {
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...BoardCards.map(c => c.value))
+            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
         )
         // if any eligeable card is available
         if (lowerCards.length) {
@@ -139,9 +134,9 @@ export const fila = {
  */
 export const any = {
     // count current score
-    score(boardCards: Card[], currentLoser: number): number[] {
+    score(): number[] {
         const score = [0, 0, 0, 0]
-        score[currentLoser] += 1
+        score[store.state.currentLoser] += 1
         return score
     },
 
@@ -152,14 +147,10 @@ export const any = {
 
     // if filtered cards turns any lower one than the init card
     // otherwise turns a card w/ the biggest value
-    villainReactCard(
-        sortedDeck: Card[],
-        eligeableCards: Card[],
-        BoardCards: Card[]
-    ): Card[] {
+    villainReactCard(sortedDeck: Card[], eligeableCards: Card[]): Card[] {
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...BoardCards.map(c => c.value))
+            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
         )
         // if any eligeable card is available
         if (lowerCards.length) {
@@ -179,32 +170,39 @@ export const any = {
  */
 export const king = {
     // count current score
-    score(boardCards: Card[], currentLoser: number): number[] {
+    score(): number[] {
         const score = [0, 0, 0, 0]
-        score[currentLoser] +=
-            boardCards.filter(card => card.id === 31).length * 8
+        score[store.state.currentLoser] +=
+            store.state.boardCards.filter(card => card.id === 31).length * 8
         return score
     },
 
     // checks if hero can init hearts
-    canInitHeart(card: Card, heroCards: Card[]): boolean {
-        const anyNotHeart = heroCards.find(c => c.flush !== 3)
+    canInitHeart(card: Card): boolean {
+        const anyNotHeart = store.state.playersCards[3].find(c => c.flush !== 3)
         return card.flush !== 3 || !anyNotHeart
+    },
+
+    // checks if hero can red queen
+    isRedQueenFirst(card: Card): boolean {
+        const heroCount = store.state.playersCards[3].length
+        return card.id === 31 && heroCount === 8
     },
 
     // returns villains init card to turn
     villainInitCard(sortedDeck: Card[]): Card {
         const anyNotHearts = sortedDeck.filter(card => card.flush !== 3)
-        return anyNotHearts.length ? anyNotHearts[0] : sortedDeck[0]
+        const heroCount = store.state.playersCards[3].length
+        const card =
+            heroCount === 8
+                ? anyNotHearts[anyNotHearts.length - 1]
+                : anyNotHearts[0]
+        return anyNotHearts.length ? card : sortedDeck[0]
     },
 
     // if filtered cards turns any lower one than the init card
     // otherwise turns a card w/ the biggest value
-    villainReactCard(
-        sortedDeck: Card[],
-        eligeableCards: Card[],
-        BoardCards: Card[]
-    ): Card[] {
+    villainReactCard(sortedDeck: Card[], eligeableCards: Card[]): Card[] {
         // the very first turn is not allowed to play the red queen
         sortedDeck =
             sortedDeck.length === 8
@@ -212,7 +210,7 @@ export const king = {
                 : sortedDeck
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...BoardCards.map(c => c.value))
+            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
         )
         // if any eligeable card is available
         if (lowerCards.length) {
@@ -232,8 +230,8 @@ export const king = {
  */
 export const quarters = {
     // count current score
-    score(playersCards: Card[][]): number[] {
-        const score = playersCards.map(player => player.length)
+    score(): number[] {
+        const score = store.state.playersCards.map(player => player.length)
         return score
     },
 
@@ -265,8 +263,8 @@ export const quarters = {
         return eligeableCards.length === 0
     },
 
-    isOver(playersCards: Card[][]): boolean {
-        const anyoneWithNoCards = playersCards.find(
+    isOver(): boolean {
+        const anyoneWithNoCards = store.state.playersCards.find(
             player => player.length === 0
         )
         return anyoneWithNoCards !== undefined
@@ -283,8 +281,8 @@ export const tens = {
     }) as Card[],
 
     // count current score
-    score(playersCards: Card[][]): number[] {
-        const score = playersCards.map(player => player.length)
+    score(): number[] {
+        const score = store.state.playersCards.map(player => player.length)
         return score
     },
 
@@ -331,8 +329,8 @@ export const general = {
         const anyFlushCard = playerCards.find(c => c.flush === initCard.flush)
         return card.flush === initCard.flush || anyFlushCard === undefined
     },
-    noCardsCheck(playersCards: Card[][]): boolean {
-        const anyoneWithNoCards = playersCards.find(
+    noCardsCheck(): boolean {
+        const anyoneWithNoCards = store.state.playersCards.find(
             player => player.length === 0
         )
         return anyoneWithNoCards !== undefined

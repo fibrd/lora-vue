@@ -236,15 +236,17 @@ const state = {
     currentScore: [0, 0, 0, 0],
     currentLoser: -1,
     tensPlayed: false,
+    tensFinished: false,
     villainsNames: [] as string[],
     playerName: 'Hero',
-    mode: 5,
+    mode: 0,
     timeOut: 2000,
     totalScore: [] as TotalScore[],
     examination: false,
     examAttempt: 0,
     thalia: 0,
-    gameIsOver: false
+    gameIsOver: false,
+    sortingCards: true
 }
 
 export default state
