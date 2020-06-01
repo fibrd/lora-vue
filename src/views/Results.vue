@@ -76,7 +76,7 @@ tbody tr:nth-child(odd) {
     background: #eee;
 }
 
-@media screen and (max-width: 460px) {
+@media screen and (max-width: 520px) {
     table {
         font-size: 80%;
     }

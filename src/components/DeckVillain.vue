@@ -55,7 +55,7 @@ export default Vue.extend({
 .player-name {
     position: absolute;
     top: -2em;
-    z-index: 25;
+    z-index: 5;
 
     h5,
     h6 {
@@ -87,11 +87,11 @@ export default Vue.extend({
     justify-content: center;
     &:nth-child(1) {
         justify-content: flex-start;
-        top: 15em;
+        top: 12em;
     }
     &:nth-child(3) {
         justify-content: flex-end;
-        top: 15em;
+        top: 12em;
     }
 }
 
@@ -106,6 +106,9 @@ export default Vue.extend({
 }
 
 @media screen and (max-width: 768px) {
+    .card {
+        width: 4em;
+    }
     .card-wrapper {
         &:nth-child(1) {
             top: 6em;
@@ -115,7 +118,7 @@ export default Vue.extend({
         }
     }
 }
-@media screen and (max-width: 460px) {
+@media screen and (max-width: 520px) {
     .card {
         width: 3.4em;
     }

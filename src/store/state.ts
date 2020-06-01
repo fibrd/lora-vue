@@ -236,7 +236,7 @@ const state = {
     currentScore: [0, 0, 0, 0],
     currentLoser: -1,
     tensPlayed: false,
-    tensFinished: false,
+    isFinished: false,
     villainsNames: [] as string[],
     playerName: 'Hero',
     mode: 0,

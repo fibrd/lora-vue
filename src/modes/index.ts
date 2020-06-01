@@ -286,25 +286,29 @@ export const tens = {
         return score
     },
 
-    canPlayCard(card: Card, playedCards: Card[]): boolean {
+    canPlayCard(card: Card): boolean {
         let canPlayCard = false
         // if card is ten and ten only
         if (card.value === 3) canPlayCard = true
         // lower card than ten must have its higher neighbour
         else if (card.value < 3) {
             canPlayCard =
-                playedCards.find(c => c.id === card.id + 1) !== undefined
+                store.state.alreadyPlayedCards.find(
+                    c => c.id === card.id + 1
+                ) !== undefined
             // higher card than ten must have its lower neighbour
         } else {
             canPlayCard =
-                playedCards.find(c => c.id === card.id - 1) !== undefined
+                store.state.alreadyPlayedCards.find(
+                    c => c.id === card.id - 1
+                ) !== undefined
         }
         return canPlayCard
     },
 
-    villainTurn(playerCards: Card[], playedCards: Card[]): Card[] {
+    villainTurn(playerCards: Card[]): Card[] {
         const eligeableCards = playerCards.filter(card =>
-            this.canPlayCard(card, playedCards)
+            this.canPlayCard(card)
         )
         if (!eligeableCards.length) return []
         return eligeableCards.length === playerCards.length
@@ -312,10 +316,8 @@ export const tens = {
             : [eligeableCards[0]]
     },
 
-    noEligeableCard(cards: Card[], playedCards: Card[]): boolean {
-        const eligeableCards = cards.filter(card =>
-            this.canPlayCard(card, playedCards)
-        )
+    noEligeableCard(cards: Card[]): boolean {
+        const eligeableCards = cards.filter(card => this.canPlayCard(card))
         return eligeableCards.length === 0
     }
 }

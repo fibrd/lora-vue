@@ -60,15 +60,16 @@ export default Vue.extend({
 }
 
 .player-name {
+    margin: 0 auto;
     position: absolute;
     top: -3em;
-    z-index: 25;
+    z-index: -1;
     width: 100%;
 
     h4,
     h6 {
         margin: 0 auto;
-        width: 80%;
+        width: 60%;
         text-align: left;
     }
 }
@@ -83,9 +84,17 @@ export default Vue.extend({
     opacity: 0;
 }
 
-@media screen and (max-width: 460px) {
+@media screen and (max-width: 768px) {
     .card {
-        width: 3.5em;
+        width: 4em;
+    }
+}
+@media screen and (max-width: 520px) {
+    .card {
+        width: 3.4em;
+    }
+    .card-wrapper {
+        margin: 0;
     }
 }
 </style>

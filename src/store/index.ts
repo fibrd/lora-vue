@@ -37,8 +37,8 @@ export default new Vuex.Store({
         SET_TENS_PLAYED(state, bool) {
             state.tensPlayed = bool
         },
-        SET_TENS_FINISHED(state, bool) {
-            state.tensFinished = bool
+        SET_IS_FINISHED(state, bool) {
+            state.isFinished = bool
         },
 
         SET_PLAYER_NAME(state, name) {
@@ -106,8 +106,8 @@ export default new Vuex.Store({
         setTensPlayed({ commit }, bool) {
             commit('SET_TENS_PLAYED', bool)
         },
-        setTensFinished({ commit }, bool) {
-            commit('SET_TENS_FINISHED', bool)
+        setIsFinished({ commit }, bool) {
+            commit('SET_IS_FINISHED', bool)
         },
         setVillainsNames({ commit }, names) {
             commit('SET_VILLAINS_NAMES', names)

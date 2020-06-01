@@ -64,6 +64,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+.board-wrapper {
+    height: 21em;
+}
 .flush-wrapper {
     width: 100%;
     display: flex;
@@ -73,7 +76,7 @@ export default Vue.extend({
 
 @for $i from 1 through 4 {
     .flush-wrapper:nth-child(#{$i}) {
-        top: $i * -2em +2em;
+        top: $i * -5em + 5em;
     }
 }
 .card {
@@ -87,33 +90,45 @@ export default Vue.extend({
 
 @for $i from 1 through 8 {
     .card:nth-child(#{$i}) {
-        left: 9em - $i * 2em;
+        left: 12em - $i * 2.5em;
     }
 }
 
 @media screen and (max-width: 768px) {
+    .board-wrapper {
+        height: 18em;
+    }
     .card {
-        width: 4.5em;
+        width: 4em;
     }
     @for $i from 1 through 4 {
         .flush-wrapper:nth-child(#{$i}) {
-            top: $i * -3em + 8em;
+            top: $i * -4em + 4em;
         }
     }
     @for $i from 1 through 8 {
         .card:nth-child(#{$i}) {
-            left: $i * -1em + 6em;
+            left: $i * -2em + 10em;
         }
     }
 }
 
-@media screen and (max-width: 460px) {
+@media screen and (max-width: 520px) {
+    .board-wrapper {
+        width: 100%;
+        height: 18em;
+    }
     .card {
-        width: 3.5em;
+        width: 3.2em;
     }
     @for $i from 1 through 4 {
         .flush-wrapper:nth-child(#{$i}) {
-            top: $i * -1.5em + 3em;
+            top: $i * -2.6em + 4em;
+        }
+    }
+    @for $i from 1 through 8 {
+        .card:nth-child(#{$i}) {
+            left: 0.2em;
         }
     }
 }

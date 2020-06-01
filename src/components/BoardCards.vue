@@ -61,9 +61,9 @@ export default Vue.extend({
     align-items: center;
     justify-content: center;
     position: relative;
-    min-height: 19em;
-    max-width: 18em;
-    margin: 1em auto 4em;
+    height: 18em;
+    width: 18em;
+    margin: 0em auto 3em;
 }
 
 .board-card {
@@ -92,7 +92,7 @@ export default Vue.extend({
 
 .highlighted {
     box-shadow: 0px 0px 4px 4px rgba(138, 7, 7, 0.6);
-    z-index: 10;
+    z-index: 6;
 }
 .card {
     transition: box-shadow 1s ease;
@@ -108,24 +108,30 @@ export default Vue.extend({
 
 @media screen and (max-width: 768px) {
     .board-wrapper {
-        margin-bottom: 3em;
-        top: -0.5em;
+        height: 15em;
+        width: 15em;
+    }
+    .board-card {
+        width: 4em;
+        &:nth-child(4) {
+            left: intend-card(15, 4, 0.5);
+        }
     }
 }
-@media screen and (max-width: 460px) {
+@media screen and (max-width: 520px) {
     .board-wrapper {
-        min-height: 12.5em;
+        height: 12em;
         width: 12em;
-        position: relative;
-        top: -3em;
-        margin-bottom: 0em;
+
+        top: -2em;
+        margin-bottom: 1em;
     }
     .board-card {
         margin: 0.2em;
-        width: 3.5em;
+        width: 3.4em;
         &:nth-child(4) {
-            z-index: 100;
-            left: intend-card(12, 3.5, 0.2);
+            z-index: 8;
+            left: intend-card(12, 3.4, 0.2);
         }
     }
 }

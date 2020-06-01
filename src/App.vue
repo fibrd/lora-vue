@@ -17,31 +17,16 @@
             <exam-select v-if="mode === 7" />
             <board-cards v-if="!isTens" />
             <board-cards-tens v-else />
+            <custom-buttons
+                v-show="heroCanAct"
+                @giveUp="giveUp"
+                @tensNext="tensNext"
+                @heroKnock="tensKnock(3)"
+            />
             <deck-hero
                 :heroCards="playersCards[3]"
                 @cardTurned="heroTurn($event)"
             />
-            <div class="button-container" v-show="heroCanAct">
-                <a href="" @click.prevent="giveUp" v-show="mode < 5">
-                    Zahodit karty
-                </a>
-                <a
-                    href=""
-                    class="button"
-                    @click.prevent="tensNext"
-                    v-show="isTens && tensPlayed && !tensFinished"
-                >
-                    Další hráč
-                </a>
-                <a
-                    href=""
-                    class="button"
-                    @click.prevent="tensKnock(3)"
-                    v-show="isTens && !tensPlayed"
-                >
-                    Ťuk
-                </a>
-            </div>
         </div>
         <div id="nav">
             <router-link to="/">Výsledky</router-link> |
@@ -74,6 +59,7 @@ import BoardCardsTens from '@/components/BoardCardsTens.vue'
 import DeckHero from '@/components/DeckHero.vue'
 import DeckVillain from '@/components/DeckVillain.vue'
 import ExamSelect from '@/components/ExamSelect.vue'
+import CustomButtons from '@/components/CustomButtons.vue'
 
 // lodash helpers
 import { shuffle, chunk, sortBy } from 'lodash-es'
@@ -84,7 +70,8 @@ export default Vue.extend({
         DeckVillain,
         BoardCards,
         BoardCardsTens,
-        ExamSelect
+        ExamSelect,
+        CustomButtons
     },
     computed: {
         ...mapState([
@@ -97,7 +84,7 @@ export default Vue.extend({
             'currentScore',
             'currentLoser',
             'tensPlayed',
-            'tensFinished',
+            'isFinished',
             'cards',
             'mode',
             'timeOut',
@@ -127,7 +114,7 @@ export default Vue.extend({
             'setCurrentLoser',
             'setCurrentScore',
             'setTensPlayed',
-            'setTensFinished',
+            'setIsFinished',
             'setVillainsNames',
             'updateScore',
             'turnOnExam',
@@ -240,8 +227,7 @@ export default Vue.extend({
                         return false
                     break
                 case 6:
-                    if (!tens.canPlayCard(card, this.alreadyPlayedCards))
-                        return false
+                    if (!tens.canPlayCard(card)) return false
                     break
             }
             return true
@@ -348,10 +334,7 @@ export default Vue.extend({
                     )
                     break
                 case 6:
-                    currentCards = tens.villainTurn(
-                        playerCards,
-                        this.alreadyPlayedCards
-                    )
+                    currentCards = tens.villainTurn(playerCards)
                     break
 
                 default:
@@ -423,13 +406,20 @@ export default Vue.extend({
             )
         },
         quartersNext(): void {
-            this.noCardsCheck()
-            if (this.playersCards[this.initPlayer].length > 0) {
-                for (let i = 0; i < 4; i++) {
-                    this.villainTurn(i)
+            this.setHeroCanAct(false)
+            this.villainTurn(this.initPlayer)
+            this.noCardsCheck().then(result => {
+                if (
+                    (!result && !this.isFinished) ||
+                    this.boardCards.length > 1
+                ) {
+                    for (let i = 1; i <= 3; i++) {
+                        const marginIndex = (i + this.initPlayer) % 4
+                        this.villainTurn(marginIndex)
+                    }
                 }
-                this.noCardsCheck()
-            }
+            })
+
             this.nextTurn()
         },
         tensMoved(): void {
@@ -442,10 +432,10 @@ export default Vue.extend({
             this.villainTurn(0)
             this.setInitPlayer(3)
             this.noCardsCheck().then(result => {
-                if (!result && !this.tensFinished) {
+                if (!result && !this.isFinished) {
                     this.villainTurn(1)
                     this.noCardsCheck().then(result => {
-                        if (!result && !this.tensFinished) {
+                        if (!result && !this.isFinished) {
                             this.villainTurn(2)
 
                             this.noCardsCheck()
@@ -458,12 +448,7 @@ export default Vue.extend({
             this.setTensPlayed(false)
         },
         tensKnock(player: number): void {
-            if (
-                tens.noEligeableCard(
-                    this.playersCards[player],
-                    this.alreadyPlayedCards
-                )
-            ) {
+            if (tens.noEligeableCard(this.playersCards[player])) {
                 this.setCurrentScore(
                     this.currentScore.map((pts: number, index: number) =>
                         index === player ? pts + 1 : pts
@@ -476,19 +461,19 @@ export default Vue.extend({
         },
         // eslint-disable-next-line
         noCardsCheck(): Promise<any> {
-            if (general.noCardsCheck() && !this.tensFinished) {
-                this.setTensFinished(true)
+            if (general.noCardsCheck() && !this.isFinished) {
+                this.setIsFinished(true)
                 this.setHeroCanAct(false)
                 this.calculatePoints()
                 setTimeout(() => {
-                    this.setTensFinished(false)
+                    this.setIsFinished(false)
                     this.nextGame()
                 }, this.timeOut)
             }
             const promise = new Promise(resolve => {
                 setTimeout(() => {
                     resolve(general.noCardsCheck())
-                }, this.timeOut / 3)
+                }, this.timeOut / 2)
             })
             return promise
         },
@@ -614,7 +599,6 @@ export default Vue.extend({
         this.setVillainsNames(general.randomNames())
         this.resetGameStats()
         this.initCards()
-
         this.allVillainsInit()
     }
 })
