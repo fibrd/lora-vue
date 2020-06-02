@@ -246,7 +246,8 @@ const state = {
     examAttempt: 0,
     thalia: 0,
     gameIsOver: false,
-    sortingCards: true
+    sortingCards: true,
+    recordSubmitted: false
 }
 
 export default state

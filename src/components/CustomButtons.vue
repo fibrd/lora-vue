@@ -1,20 +1,20 @@
 <template>
     <div class="button-container">
         <div class="button-wrapper">
-            <a href="" @click.prevent="$emit('giveUp')" v-show="mode < 5">
+            <a href="#top" @click.prevent="$emit('giveUp')" v-show="mode < 5">
                 Zahodit karty
             </a>
             <a
-                href=""
-                class="button"
+                href="#top"
+                class="button-tens"
                 @click.prevent="$emit('tensNext')"
-                v-show="isTens && tensPlayed && !tensFinished"
+                v-show="isTens && tensPlayed && !isFinished"
             >
                 Další hráč
             </a>
             <a
-                href=""
-                class="button"
+                href="#top"
+                class="button-tens"
                 @click.prevent="$emit('heroKnock')"
                 v-show="isTens && !tensPlayed"
             >
@@ -29,7 +29,7 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 export default Vue.extend({
     computed: {
-        ...mapState(['mode', 'tensPlayed', 'tensFinished']),
+        ...mapState(['mode', 'tensPlayed', 'isFinished']),
         isTens() {
             return this.mode === 6
         }
@@ -63,6 +63,7 @@ export default Vue.extend({
 
 .button-container {
     width: 95%;
+    white-space: nowrap;
     max-width: 60em;
     display: flex;
     position: relative;
@@ -74,6 +75,11 @@ export default Vue.extend({
         font-weight: bold;
         color: #2c3e50;
     }
+}
+
+a.button-tens {
+    font-size: 1.2em;
+    color: rgb(185, 24, 24);
 }
 
 .button-wrapper {

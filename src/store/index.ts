@@ -76,6 +76,9 @@ export default new Vuex.Store({
         },
         SET_SORTING_CARDS(state, bool) {
             state.sortingCards = bool
+        },
+        SUBMIT_RECORD(state) {
+            state.recordSubmitted = true
         }
     },
     actions: {
@@ -156,6 +159,9 @@ export default new Vuex.Store({
         },
         setSortingCards({ commit }, bool) {
             commit('SET_SORTING_CARDS', bool)
+        },
+        submitRecord({ commit }) {
+            commit('SUBMIT_RECORD')
         }
     }
 })

@@ -30,7 +30,8 @@
         </div>
         <div id="nav">
             <router-link to="/">Výsledky</router-link> |
-            <router-link to="/settings">Nastavení</router-link>
+            <router-link to="/settings">Nastavení</router-link> |
+            <router-link to="/records">Rekordy</router-link>
         </div>
         <router-view />
     </div>

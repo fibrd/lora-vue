@@ -1,6 +1,6 @@
 <template>
     <div class="dif">
-        <h1 class="text-center">Nastavení:</h1>
+        <h1 class="text-center">Nastavení</h1>
 
         <div>
             <label for="nameInput">Jméno: </label>
@@ -22,8 +22,8 @@
         <div>
             <label for="sortingCards">Seřadit karty: </label>
             <select id="sortingCards" @change="sortingCardsChanged($event)">
-                <option :value="true">ANO</option>
-                <option :value="false" :selected="!sortingCards">NE</option>
+                <option :value="true">ano</option>
+                <option :value="false" :selected="!sortingCards">ne</option>
             </select>
         </div>
     </div>
