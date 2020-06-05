@@ -1,4 +1,4 @@
-import { Card, TotalScore } from '../types'
+import { Card, TotalScore, Record } from '../types'
 
 const state = {
     cards: [
@@ -238,16 +238,20 @@ const state = {
     tensPlayed: false,
     isFinished: false,
     villainsNames: [] as string[],
-    playerName: 'Hero',
+    playerName: '',
     mode: 0,
-    timeOut: 2000,
+    timeOut: 0,
     totalScore: [] as TotalScore[],
     examination: false,
     examAttempt: 0,
     thalia: 0,
     gameIsOver: false,
     sortingCards: true,
-    recordSubmitted: false
+    recordSubmitted: false,
+    records: [] as Record[],
+    recordsDaily: [] as Record[],
+    recordsWeekly: [] as Record[],
+    recordsMonthly: [] as Record[]
 }
 
 export default state

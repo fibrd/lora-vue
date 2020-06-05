@@ -1,60 +1,60 @@
 <template>
     <div class="records">
         <h1 class="text-center">Rekordy</h1>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Jméno</th>
-                    <th>Body</th>
-                    <th>Místo</th>
-                    <th>Datum</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(record, index) in records" :key="record._id">
-                    <td>{{ index + 1 }}.</td>
-                    <td>{{ record.name }}</td>
-                    <td>{{ record.points }}</td>
-                    <td>{{ record.ranking }}</td>
-                    <td>{{ formatDate(record.date) }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div id="nav">
+            <router-link to="/records">Celkové</router-link> |
+            <router-link to="/records-daily">Dnešní</router-link> |
+            <router-link to="/records-weekly">Týdenní</router-link> |
+            <router-link to="/records-monthly">Měsíční</router-link>
+        </div>
+        <router-view :key="$route.path" />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
-import moment from 'moment'
-import 'moment/locale/cs'
-moment.locale('cs')
-import { Record } from '@/types'
+import { mapActions } from 'vuex'
 
 export default Vue.extend({
-    data() {
-        return {
-            records: [] as Record[]
-        }
-    },
     methods: {
-        formatDate(date: Date): string {
-            const formattedDate = moment(date).fromNow()
-            return formattedDate
-        }
+        ...mapActions([
+            'setRecords',
+            'setRecordsDaily',
+            'setRecordsWeekly',
+            'setRecordsMonthly'
+        ])
     },
     mounted() {
         axios({
             method: 'GET',
             url: 'https://desolate-beyond-09746.herokuapp.com/api/records',
             headers: { crossDomain: true }
-        }).then(response => (this.records = response.data))
+        }).then(response => this.setRecords(response.data))
+
+        axios({
+            method: 'GET',
+            url: 'https://desolate-beyond-09746.herokuapp.com/api/records/day',
+            headers: { crossDomain: true }
+        }).then(response => this.setRecordsDaily(response.data))
+
+        axios({
+            method: 'GET',
+            url: 'https://desolate-beyond-09746.herokuapp.com/api/records/week',
+            headers: { crossDomain: true }
+        }).then(response => this.setRecordsWeekly(response.data))
+
+        axios({
+            method: 'GET',
+            url:
+                'https://desolate-beyond-09746.herokuapp.com/api/records/month',
+            headers: { crossDomain: true }
+        }).then(response => this.setRecordsMonthly(response.data))
     }
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #app .text-center {
     text-align: center;
 }

@@ -44,11 +44,18 @@ export default Vue.extend({
         ...mapActions(['setPlayerName', 'setTimeOut', 'setSortingCards']),
         // eslint-disable-next-line
         timeOutChanged(event: any): void {
-            this.setTimeOut(event.target.value)
+            const timeOut = event.target.value
+            this.setTimeOut(timeOut)
+            localStorage.setItem('timeOut', timeOut)
         },
         // eslint-disable-next-line
         sortingCardsChanged(event: any): void {
-            this.setSortingCards(JSON.parse(event.target.value))
+            const sorting = event.target.value
+            this.setSortingCards(JSON.parse(sorting))
+            localStorage.setItem('sorting', sorting)
+        },
+        saveNameToStorage(): void {
+            localStorage.setItem('playerName', this.name)
         }
     },
     watch: {
@@ -60,6 +67,9 @@ export default Vue.extend({
     },
     created() {
         this.name = this.playerName
+    },
+    beforeDestroy() {
+        this.saveNameToStorage()
     }
 })
 </script>

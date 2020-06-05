@@ -79,6 +79,18 @@ export default new Vuex.Store({
         },
         SUBMIT_RECORD(state) {
             state.recordSubmitted = true
+        },
+        SET_RECORDS(state, records) {
+            state.records = records
+        },
+        SET_RECORDS_DAILY(state, recordsDaily) {
+            state.recordsDaily = recordsDaily
+        },
+        SET_RECORDS_WEEKLY(state, recordsWeekly) {
+            state.recordsWeekly = recordsWeekly
+        },
+        SET_RECORDS_MONTHLY(state, recordsMonthly) {
+            state.recordsMonthly = recordsMonthly
         }
     },
     actions: {
@@ -91,8 +103,13 @@ export default new Vuex.Store({
         setHeroCanAct({ commit }, bool) {
             commit('SET_HERO_CAN_ACT', bool)
         },
-        setBoardCards({ commit }, cards) {
+        setBoardCards({ state, commit }, cards) {
             commit('SET_BOARD_CARDS', cards)
+            if (cards.length)
+                commit('SET_ALREADY_PLAYED_CARDS', [
+                    ...state.alreadyPlayedCards,
+                    cards[cards.length - 1]
+                ])
         },
         setInitCard({ commit }, card) {
             commit('SET_INIT_CARD', card)
@@ -162,6 +179,18 @@ export default new Vuex.Store({
         },
         submitRecord({ commit }) {
             commit('SUBMIT_RECORD')
+        },
+        setRecords({ commit }, records) {
+            commit('SET_RECORDS', records)
+        },
+        setRecordsDaily({ commit }, recordsDaily) {
+            commit('SET_RECORDS_DAILY', recordsDaily)
+        },
+        setRecordsWeekly({ commit }, recordsWeekly) {
+            commit('SET_RECORDS_WEEKLY', recordsWeekly)
+        },
+        setRecordsMonthly({ commit }, recordsMonthly) {
+            commit('SET_RECORDS_MONTHLY', recordsMonthly)
         }
     }
 })
