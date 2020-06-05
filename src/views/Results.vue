@@ -138,11 +138,11 @@ table {
     border-collapse: collapse;
     width: 100%;
     max-width: 30em;
-    margin: 2em auto;
+    margin: 2emauto;
 }
 th,
 td {
-    padding: 0.25rem;
+    padding: 0.25em;
     text-align: left;
     border: 1px solid #ccc;
     text-align: center;

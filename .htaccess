@@ -1,0 +1,4 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(.*)$ http://hra-lora.cz/ [R=301,L]
+</IfModule>

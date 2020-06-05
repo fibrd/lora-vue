@@ -48,7 +48,7 @@ export default Vue.extend({
     //color: #666666;
     //font-family: Arial;
     font-weight: bold;
-    padding: 0.4em 0.6em;
+    padding: 0.4em0.6em;
     margin-bottom: 0.4em;
     text-decoration: none;
     text-shadow: 0px 1px 0px #ffffff;

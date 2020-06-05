@@ -146,6 +146,7 @@ export default Vue.extend({
         heroTurn(card: Card) {
             // checks if the hero is allowed to act
             if (!this.heroCanAct) return
+            if (this.isFinished) return
 
             // not allowed while choosing an exam mode
             if (this.mode === 7) return
@@ -288,6 +289,7 @@ export default Vue.extend({
                         currentCard = any.villainInitCard(sortedDeck)
                         break
                 }
+
                 this.setInitCard(currentCard)
 
                 if (!this.isQuarters) {
@@ -398,19 +400,15 @@ export default Vue.extend({
             this.setHeroCanAct(false)
             this.villainTurn(this.initPlayer)
             this.noCardsCheck().then(result => {
-                if (
-                    (!result && !this.isFinished) ||
-                    this.boardCards.length > 1
-                ) {
+                if (!result || this.boardCards.length > 1) {
                     for (let i = 1; i <= 3; i++) {
                         const marginIndex = (i + this.initPlayer) % 4
                         this.villainTurn(marginIndex)
                     }
                     this.noCardsCheck()
+                    this.nextTurn()
                 }
             })
-
-            this.nextTurn()
         },
         tensMoved(): void {
             if (this.isFinished) return
@@ -457,7 +455,6 @@ export default Vue.extend({
                 this.setHeroCanAct(false)
                 this.calculatePoints()
                 setTimeout(() => {
-                    this.setIsFinished(false)
                     this.nextGame()
                 }, this.timeOut)
             }
@@ -570,6 +567,7 @@ export default Vue.extend({
             this.setAlreadyPlayedCards([])
             this.setInitCard({} as Card)
             this.setBoardCards([])
+            this.setIsFinished(false)
             this.setHeroCanAct(this.thalia === 3)
         },
         gameOver(): void {

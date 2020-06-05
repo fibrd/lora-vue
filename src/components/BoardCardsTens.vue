@@ -82,6 +82,7 @@ export default Vue.extend({
 .card {
     position: relative;
     width: 5em;
+    max-height: 7.5em;
 }
 
 .blank {
@@ -100,6 +101,7 @@ export default Vue.extend({
     }
     .card {
         width: 4em;
+        max-height: 6em;
     }
     @for $i from 1 through 4 {
         .flush-wrapper:nth-child(#{$i}) {
@@ -120,6 +122,7 @@ export default Vue.extend({
     }
     .card {
         width: 3.2em;
+        max-height: 4.8em;
     }
     @for $i from 1 through 4 {
         .flush-wrapper:nth-child(#{$i}) {

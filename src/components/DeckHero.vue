@@ -56,7 +56,7 @@ export default Vue.extend({
 .hero-wrapper {
     position: relative;
     max-width: 60em;
-    margin: 0em auto;
+    margin: 0emauto;
 }
 
 .player-name {
