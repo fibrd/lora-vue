@@ -1,7 +1,7 @@
 <template>
     <div class="records">
         <h1 class="text-center">Rekordy</h1>
-        <div id="nav">
+        <div class="nav secondary-navigation">
             <router-link to="/records">Celkové</router-link> |
             <router-link to="/records-daily">Dnešní</router-link> |
             <router-link to="/records-weekly">Týdenní</router-link> |
@@ -80,7 +80,7 @@ tbody tr:nth-child(odd) {
     background: #eee;
 }
 
-@media screen and (max-width: 520px) {
+@media screen and (max-width: 560px) {
     table {
         font-size: 80%;
     }

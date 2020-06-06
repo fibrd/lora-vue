@@ -28,7 +28,7 @@
                 @cardTurned="heroTurn($event)"
             />
         </div>
-        <div id="nav">
+        <div id="nav" class="nav main-navigation">
             <router-link to="/">Výsledky</router-link> |
             <router-link to="/settings">Nastavení</router-link> |
             <router-link to="/records">Rekordy</router-link>
@@ -453,8 +453,8 @@ export default Vue.extend({
             if (general.noCardsCheck() && !this.isFinished) {
                 this.setIsFinished(true)
                 this.setHeroCanAct(false)
-                this.calculatePoints()
                 setTimeout(() => {
+                    this.calculatePoints()
                     this.nextGame()
                 }, this.timeOut)
             }
@@ -567,8 +567,9 @@ export default Vue.extend({
             this.setAlreadyPlayedCards([])
             this.setInitCard({} as Card)
             this.setBoardCards([])
-            this.setIsFinished(false)
             this.setHeroCanAct(this.thalia === 3)
+            if (this.isFinished) this.setIsFinished(false)
+            if (this.tensPlayed) this.setTensPlayed(false)
         },
         gameOver(): void {
             window.alert(

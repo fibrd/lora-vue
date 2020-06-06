@@ -1,6 +1,7 @@
 <template>
     <div class="table-container" v-if="totalScore.length">
         <form
+            class="submit-form"
             @submit.prevent="saveRecord"
             v-if="gameIsOver && !recordSubmitted"
         >
@@ -9,9 +10,10 @@
                 type="text"
                 id="inputName"
                 ref="inputName"
-                minlength="3"
+                minlength="4"
                 maxlength="12"
                 :value="playerName"
+                required
             />
             <input type="submit" value="Uložit výsledek" />
         </form>
@@ -55,6 +57,7 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 import { sortBy } from 'lodash-es'
 import { general } from '@/modes'
+import { formatName } from '@/utils'
 
 export default Vue.extend({
     computed: {
@@ -99,12 +102,16 @@ export default Vue.extend({
     },
     methods: {
         saveRecord(): void {
-            this.$store.dispatch('submitRecord')
             const input = this.$refs.inputName as HTMLInputElement
+            const name = formatName(input.value)
+            const nameLen = name.length
+            if (nameLen < 4 || nameLen > 12) return
+
+            this.$store.dispatch('submitRecord')
             const points = this.currentScore[3]
             const ranking = this.ranking[3]
             const bodyData = {
-                name: input.value,
+                name,
                 points,
                 ranking
             }
@@ -122,7 +129,7 @@ export default Vue.extend({
                     window.alert(
                         'Vznikla nespecifikovaná chyba při pokusu o uložení záznamu.'
                     )
-                    console.error(err)
+                    console.error(err.message)
                 })
         }
     }
@@ -155,7 +162,11 @@ tbody tr:nth-child(odd) {
     background: #eee;
 }
 
-@media screen and (max-width: 520px) {
+.submit-form {
+    padding-top: 1em;
+}
+
+@media screen and (max-width: 560px) {
     table {
         font-size: 80%;
     }

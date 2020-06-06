@@ -118,20 +118,17 @@ export default Vue.extend({
         }
     }
 }
-@media screen and (max-width: 520px) {
+@media screen and (max-width: 560px) {
     .board-wrapper {
-        height: 12em;
-        width: 12em;
-
-        top: -2em;
-        margin-bottom: 1em;
+        top: -1em;
+        height: 14em;
+        margin-bottom: 2em;
     }
     .board-card {
         margin: 0.2em;
-        width: 3.4em;
         &:nth-child(4) {
             z-index: 8;
-            left: intend-card(12, 3.4, 0.2);
+            left: intend-card(15, 4, 0.2);
         }
     }
 }

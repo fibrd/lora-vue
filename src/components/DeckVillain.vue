@@ -118,14 +118,14 @@ export default Vue.extend({
         }
     }
 }
-@media screen and (max-width: 520px) {
+@media screen and (max-width: 560px) {
     .card {
-        width: 3.4em;
+        width: 3.8em;
     }
     .card-wrapper {
         &:nth-child(1),
         &:nth-child(3) {
-            top: 4em;
+            top: 3em;
         }
     }
 }

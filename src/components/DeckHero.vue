@@ -56,7 +56,7 @@ export default Vue.extend({
 .hero-wrapper {
     position: relative;
     max-width: 60em;
-    margin: 0emauto;
+    margin: 0em auto;
 }
 
 .player-name {
@@ -89,10 +89,7 @@ export default Vue.extend({
         width: 4em;
     }
 }
-@media screen and (max-width: 520px) {
-    .card {
-        width: 3.4em;
-    }
+@media screen and (max-width: 560px) {
     .card-wrapper {
         margin: 0;
     }
