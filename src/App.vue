@@ -18,7 +18,7 @@
             <board-cards v-if="!isTens" />
             <board-cards-tens v-else />
             <custom-buttons
-                v-show="heroCanAct"
+                v-show="heroCanAct && !isFinished"
                 @giveUp="giveUp"
                 @tensNext="tensNext"
                 @heroKnock="tensKnock(3)"

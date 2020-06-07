@@ -7,6 +7,7 @@
             <img
                 v-for="card in cards"
                 :key="card.src"
+                :class="{ highlighted: highlighted() }"
                 class="card"
                 :src="card.src"
                 :alt="card.name"
@@ -27,7 +28,12 @@ export default Vue.extend({
         heroCards: Array as () => Card[]
     },
     computed: {
-        ...mapState(['playerName', 'currentScore', 'sortingCards']),
+        ...mapState([
+            'playerName',
+            'currentScore',
+            'sortingCards',
+            'heroCanAct'
+        ]),
         heroScore(): number {
             return this.currentScore[3]
         },
@@ -38,6 +44,11 @@ export default Vue.extend({
         cards(): Card[] {
             const cards = this.sortingCards ? this.sortedCards : this.heroCards
             return cards
+        }
+    },
+    methods: {
+        highlighted(): boolean {
+            return this.heroCanAct
         }
     }
 })
@@ -72,6 +83,10 @@ export default Vue.extend({
         width: 60%;
         text-align: left;
     }
+}
+
+.highlighted {
+    box-shadow: 0px 0px 2px 2px rgba(37, 114, 1, 0.4);
 }
 
 .turned-enter-active,

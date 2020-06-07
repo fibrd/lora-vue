@@ -8,7 +8,7 @@
                 href="#top"
                 class="button-tens"
                 @click.prevent="$emit('tensNext')"
-                v-show="isTens && tensPlayed && !isFinished"
+                v-show="isTens && tensPlayed"
             >
                 Další hráč
             </a>

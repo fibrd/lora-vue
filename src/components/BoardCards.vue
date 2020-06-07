@@ -91,7 +91,7 @@ export default Vue.extend({
 }
 
 .highlighted {
-    box-shadow: 0px 0px 4px 4px rgba(138, 7, 7, 0.6);
+    box-shadow: 0px 0px 3px 3px rgba(138, 7, 7, 0.6);
     z-index: 6;
 }
 .card {

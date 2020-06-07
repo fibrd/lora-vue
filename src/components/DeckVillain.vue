@@ -64,7 +64,7 @@ export default Vue.extend({
 }
 
 .highlighted {
-    box-shadow: 0px 0px 4px 4px rgba(37, 114, 1, 0.4);
+    box-shadow: 0px 0px 3px 3px rgba(37, 114, 1, 0.4);
 }
 
 @for $i from 1 through 8 {
