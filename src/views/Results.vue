@@ -20,15 +20,15 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Pořadí</th>
-                    <th v-for="(rank, index) in ranking" :key="index">
-                        {{ rank }}.
-                    </th>
-                </tr>
-                <tr>
                     <th>Body</th>
                     <th v-for="(points, index) in currentScore" :key="index">
                         {{ points }}
+                    </th>
+                </tr>
+                <tr>
+                    <th>Pořadí</th>
+                    <th v-for="(rank, index) in ranking" :key="index">
+                        {{ rank }}.
                     </th>
                 </tr>
                 <tr>

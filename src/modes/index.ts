@@ -1,4 +1,5 @@
 import { Card } from '@/types'
+import { sample } from 'lodash-es'
 import store from '@/store'
 
 // filtering players cards w/ the same flush
@@ -55,9 +56,12 @@ export const hearts = {
     // otherwise turns a card
     villainReactCard(sortedDeck: Card[]): Card[] {
         const eligeableCards = filterFlushCards(sortedDeck)
+        const flushBoardCards = store.state.boardCards.filter(
+            c => c.flush === store.state.initCard.flush
+        )
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
+            c => c.value < Math.max(...flushBoardCards.map(c => c.value))
         )
         // if any eligeable card is available
         if (lowerCards.length) {
@@ -102,11 +106,16 @@ export const queens = {
     // otherwise turns a card w/ the biggest value
     villainReactCard(sortedDeck: Card[]): Card[] {
         const eligeableCards = filterFlushCards(sortedDeck)
-        const anyQueen = sortedDeck.find(c => c.value === 5)
+        const flushBoardCards = store.state.boardCards.filter(
+            c => c.flush === store.state.initCard.flush
+        )
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
+            c => c.value < Math.max(...flushBoardCards.map(c => c.value))
         )
+
+        const anyQueen = sortedDeck.find(c => c.value === 5)
+
         // if any eligeable card is available
         if (lowerCards.length) {
             currentCard = lowerCards[lowerCards.length - 1]
@@ -180,10 +189,14 @@ export const any = {
     // otherwise turns a card w/ the biggest value
     villainReactCard(sortedDeck: Card[]): Card[] {
         const eligeableCards = filterFlushCards(sortedDeck)
+        const flushBoardCards = store.state.boardCards.filter(
+            c => c.flush === store.state.initCard.flush
+        )
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
+            c => c.value < Math.max(...flushBoardCards.map(c => c.value))
         )
+
         // if any eligeable card is available
         if (lowerCards.length) {
             currentCard = lowerCards[lowerCards.length - 1]
@@ -251,9 +264,12 @@ export const king = {
         const redKing = resortedDeck.find(c => c.id === 31)
 
         const eligeableCards = filterFlushCards(resortedDeck)
+        const flushBoardCards = store.state.boardCards.filter(
+            c => c.flush === store.state.initCard.flush
+        )
         let currentCard
         const lowerCards = eligeableCards.filter(
-            c => c.value < Math.max(...store.state.boardCards.map(c => c.value))
+            c => c.value < Math.max(...flushBoardCards.map(c => c.value))
         )
         // if any eligeable card is available
         if (lowerCards.length) {
@@ -295,6 +311,29 @@ export const quarters = {
             card.value - initCard.value <= 3 &&
             card.flush === initCard.flush
         )
+    },
+
+    // returns villains init card to turn
+    villainInitCard(sortedDeck: Card[]): Card {
+        const deckLen = sortedDeck.length
+        let deck = sortedDeck
+        if (deckLen === 8) {
+            deck = deck.filter(c => this.canInitCard(c, sortedDeck))
+        }
+        const aces = deck.filter(c => c.value === 7)
+        const eligeableIds = [] as number[]
+        if (aces.length) {
+            aces.forEach(ace => {
+                eligeableIds.push(ace.id - 3)
+                eligeableIds.push(ace.id - 2)
+                eligeableIds.push(ace.id - 1)
+            })
+        }
+        eligeableIds.push(...store.state.alreadyPlayedCards.map(c => c.id - 1))
+        const eligeableCard = deck.find(c => eligeableIds.includes(c.id))
+        if (eligeableCard) return eligeableCard
+        else if (aces.length) return aces[0]
+        else return sortedDeck[0]
     },
 
     villainReactCards(playerCards: Card[]): Card[] {
@@ -354,19 +393,38 @@ export const tens = {
         return canPlayCard
     },
 
-    villainTurn(playerCards: Card[]): Card[] {
-        const eligeableCards = playerCards.filter(card =>
+    villainTurn(sortedDeck: Card[]): Card[] {
+        const tens = sortedDeck.filter(card => card.value === 3)
+        const lowCards = sortedDeck.filter(card => card.value < 3)
+        const highCards = sortedDeck.filter(card => card.value > 3)
+        const resortedDeck = [...tens, ...lowCards.reverse(), ...highCards]
+        const eligeableCards = resortedDeck.filter(card =>
             this.canPlayCard(card)
         )
         if (!eligeableCards.length) return []
-        return eligeableCards.length === playerCards.length
+        return eligeableCards.length === resortedDeck.length
             ? eligeableCards
-            : [eligeableCards[0]]
+            : [sample(eligeableCards) as Card]
     },
 
     noEligeableCard(cards: Card[]): boolean {
         const eligeableCards = cards.filter(card => this.canPlayCard(card))
         return eligeableCards.length === 0
+    }
+}
+
+/**
+ * EXAM SELECT
+ */
+export const exam = {
+    selectGame(sortedDeck: Card[]): number {
+        if (sortedDeck.filter(c => tens.canPlayCard(c)).length > 5) return 6 // 6+ cards imidiatelly turnable in tens mode
+        if (
+            sortedDeck.filter(c => c.value > 3).length > 5 && // 6+ cards higher than ten
+            sortedDeck.filter(c => c.value === 7).length > 1 // at least two aces in the deck
+        )
+            return 5
+        return 4
     }
 }
 

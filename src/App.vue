@@ -34,6 +34,15 @@
             <router-link to="/records">Rekordy</router-link>
         </div>
         <router-view />
+
+        <footer class="main-footer">
+            <p>
+                &copy; DF 2020
+            </p>
+            <p>
+                <a href="mailto:hra-lora@email.cz">hra-lora@email.cz</a>
+            </p>
+        </footer>
     </div>
 </template>
 
@@ -51,7 +60,8 @@ import {
     any,
     king,
     quarters,
-    tens
+    tens,
+    exam
 } from '@/modes/'
 
 // components
@@ -284,6 +294,9 @@ export default Vue.extend({
                     case 4:
                         currentCard = king.villainInitCard(sortedDeck)
                         break
+                    case 5:
+                        currentCard = quarters.villainInitCard(sortedDeck)
+                        break
 
                     default:
                         currentCard = any.villainInitCard(sortedDeck)
@@ -324,7 +337,7 @@ export default Vue.extend({
                     currentCards = quarters.villainReactCards(playerCards)
                     break
                 case 6:
-                    currentCards = tens.villainTurn(playerCards)
+                    currentCards = tens.villainTurn(sortedDeck)
                     break
 
                 default:
@@ -456,7 +469,7 @@ export default Vue.extend({
                 setTimeout(() => {
                     this.calculatePoints()
                     this.nextGame()
-                }, this.timeOut)
+                }, this.timeOut * 2)
             }
             const promise = new Promise(resolve => {
                 setTimeout(() => {
@@ -535,12 +548,8 @@ export default Vue.extend({
                     score: this.currentScore
                 })
                 this.nextGameMode()
-            }
-
-            this.resetGameStats()
-            this.initCards()
-
-            if (this.mode < 7) {
+                this.resetGameStats()
+                this.initCards()
                 this.allVillainsInit()
             }
         },
@@ -550,6 +559,9 @@ export default Vue.extend({
                 this.setThalia(this.thalia + 1)
                 this.setGame(0)
                 this.turnOffExam()
+                this.resetGameStats()
+                this.initCards()
+                this.allVillainsInit()
             }
         },
         loadLocalStorage(): void {
@@ -586,9 +598,11 @@ export default Vue.extend({
 
                 this.turnOnExam()
                 this.resetGameStats()
+                this.initCards()
                 if (this.initPlayer !== 3) {
-                    this.setGame(4)
-
+                    this.setGame(
+                        exam.selectGame(this.playersCards[this.initPlayer])
+                    )
                     this.allVillainsInit()
                 }
             }

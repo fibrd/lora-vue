@@ -121,7 +121,7 @@ export default Vue.extend({
     }
     @for $i from 1 through 4 {
         .flush-wrapper:nth-child(#{$i}) {
-            top: 7em + $i * -4.5em;
+            top: 5.5em + $i * -4.2em;
         }
     }
     @for $i from 1 through 8 {

@@ -239,7 +239,7 @@ const state = {
     isFinished: false,
     villainsNames: [] as string[],
     playerName: '',
-    mode: 0,
+    mode: 6,
     timeOut: 0,
     totalScore: [] as TotalScore[],
     examination: false,

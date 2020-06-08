@@ -37,7 +37,6 @@ export default Vue.extend({
             url: 'https://desolate-beyond-09746.herokuapp.com/api/records/day',
             headers: { crossDomain: true }
         }).then(response => {
-            console.log(response.data)
             this.setRecordsDaily(response.data)
         })
 

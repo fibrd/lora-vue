@@ -64,7 +64,8 @@ export default Vue.extend({
 .button-container {
     width: 95%;
     white-space: nowrap;
-    max-width: 60em;
+    margin: 0 auto;
+    max-width: 50em;
     display: flex;
     position: relative;
     justify-content: flex-end;
@@ -78,7 +79,10 @@ export default Vue.extend({
 }
 
 a.button-tens {
-    font-size: 1.2em;
+    position: relative;
+    top: -0.2em;
+    font-size: 1.3em;
+    padding: 0.4em;
     color: rgb(185, 24, 24);
 }
 
