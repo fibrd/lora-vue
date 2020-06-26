@@ -17,13 +17,13 @@
 import Vue from 'vue'
 import { mapState } from 'vuex'
 import { Card } from '@/types'
-import { tens } from '@/modes'
+import { tens } from '@/modes/levelEasy'
 
 export default Vue.extend({
     data() {
         return {
             cardsPlayed: [] as Card[],
-            blankSrc: './assets/cards/blank.png'
+            blankSrc: '/assets/cardsmini/blank.jpg'
         }
     },
     computed: {

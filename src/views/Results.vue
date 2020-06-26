@@ -1,53 +1,64 @@
 <template>
-    <div class="table-container" v-if="totalScore.length">
-        <form
-            class="submit-form"
-            @submit.prevent="saveRecord"
-            v-if="gameIsOver && !recordSubmitted"
-        >
-            <label for="inputName">Zadejte své jméno: </label>
-            <input
-                type="text"
-                id="inputName"
-                ref="inputName"
-                minlength="4"
-                maxlength="12"
-                :value="playerName"
-                required
-            />
-            <input type="submit" value="Uložit výsledek" />
-        </form>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Body</th>
-                    <th v-for="(points, index) in currentScore" :key="index">
-                        {{ points }}
-                    </th>
-                </tr>
-                <tr>
-                    <th>Pořadí</th>
-                    <th v-for="(rank, index) in ranking" :key="index">
-                        {{ rank }}.
-                    </th>
-                </tr>
-                <tr>
-                    <th>Jméno</th>
-                    <th v-for="n in 3" :key="n">
-                        {{ villainsNames[n - 1] }}
-                    </th>
-                    <th>{{ playerName }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(item, index) in totalScore" :key="index">
-                    <td>{{ item.mode }}</td>
-                    <td v-for="(points, index) in item.score" :key="index">
-                        {{ points }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="diff">
+        <h2 class="text-center">Stav hry</h2>
+        <div class="table-container" v-if="totalScore.length">
+            <form
+                class="submit-form"
+                @submit.prevent="saveRecord"
+                v-if="gameIsOver && !recordSubmitted"
+            >
+                <label for="inputName">Zadejte své jméno: </label>
+                <input
+                    type="text"
+                    id="inputName"
+                    ref="inputName"
+                    minlength="4"
+                    maxlength="12"
+                    :value="playerName"
+                    required
+                />
+                <input type="submit" value="Uložit výsledek" />
+            </form>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Body</th>
+                        <th
+                            v-for="(points, index) in currentScore"
+                            :key="index"
+                        >
+                            {{ points }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Pořadí</th>
+                        <th v-for="(rank, index) in ranking" :key="index">
+                            {{ rank }}.
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Jméno</th>
+                        <th v-for="n in 3" :key="n">
+                            {{ villainsNames[n - 1] }}
+                        </th>
+                        <th>{{ playerName }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in totalScore" :key="index">
+                        <td>{{ item.mode }}</td>
+                        <td v-for="(points, index) in item.score" :key="index">
+                            {{ points }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div v-else>
+            <p>
+                Stav se zde zobrazí po odehraní první hry.
+            </p>
+        </div>
     </div>
 </template>
 
@@ -56,7 +67,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import { mapState } from 'vuex'
 import { sortBy } from 'lodash-es'
-import { general } from '@/modes'
+import { general } from '@/modes/levelEasy'
 import { formatName } from '@/utils'
 
 export default Vue.extend({
@@ -66,7 +77,8 @@ export default Vue.extend({
             'playerName',
             'villainsNames',
             'gameIsOver',
-            'recordSubmitted'
+            'recordSubmitted',
+            'level'
         ]),
         listModes() {
             return [
@@ -115,9 +127,14 @@ export default Vue.extend({
                 points,
                 ranking
             }
+            const urlEndpoint =
+                this.level === 'easy'
+                    ? 'https://desolate-beyond-09746.herokuapp.com/api/records'
+                    : 'https://stormy-woodland-81750.herokuapp.com/api/records-medium'
+
             axios({
                 method: 'POST',
-                url: 'https://desolate-beyond-09746.herokuapp.com/api/records',
+                url: urlEndpoint,
                 data: bodyData
             })
                 .then(() =>

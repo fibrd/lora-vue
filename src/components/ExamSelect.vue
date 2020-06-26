@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { general } from '@/modes'
+import { general } from '@/modes/levelEasy'
 import { mapState, mapActions } from 'vuex'
 
 export default Vue.extend({

@@ -24,7 +24,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            cardBackSrc: './assets/cards/back.png'
+            cardBackSrc: '/assets/cardsmini/back.jpg'
         }
     },
     computed: {

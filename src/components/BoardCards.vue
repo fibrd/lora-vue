@@ -22,7 +22,7 @@ import { BoardCard } from '@/types'
 export default Vue.extend({
     data() {
         return {
-            srcBlank: './assets/cards/blank.png'
+            srcBlank: '/assets/cardsmini/blank.png'
         }
     },
     computed: {

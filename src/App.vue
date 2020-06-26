@@ -1,12 +1,8 @@
 <template>
     <div id="app">
-        <div v-if="!gameIsOver" class="game-container">
-            <div class="page-heading">
-                <h3 class="current-game">
-                    <span v-show="examination">Maturita: </span>
-                    {{ gameMode }} / {{ thalia + 1 }}. tálie
-                </h3>
-            </div>
+        <init-page v-if="!started" />
+        <div v-if="!gameIsOver && started" class="game-container">
+            <page-heading />
             <div class="villains-container">
                 <deck-villain
                     v-for="index in 3"
@@ -28,10 +24,11 @@
                 @cardTurned="heroTurn($event)"
             />
         </div>
+        <hr />
         <div id="nav" class="nav main-navigation">
-            <router-link to="/">Výsledky</router-link> |
-            <router-link to="/settings">Nastavení</router-link> |
-            <router-link to="/records">Rekordy</router-link>
+            <router-link to="/results">Stav</router-link> |
+            <router-link to="/records">Rekordy</router-link> |
+            <router-link to="/settings">Nastavení</router-link>
         </div>
         <router-view />
 
@@ -39,8 +36,12 @@
             <p>
                 &copy; DF 2020
             </p>
+            <p>✉ <a href="mailto:hra-lora@email.cz">hra-lora@email.cz</a></p>
             <p>
-                <a href="mailto:hra-lora@email.cz">hra-lora@email.cz</a>
+                🍺
+                <a href="https://paypal.me/pools/c/8qdKwlIq7p"
+                    >Deset pivek na podporu vývoje</a
+                >
             </p>
         </footer>
     </div>
@@ -52,17 +53,8 @@ import { mapState, mapActions } from 'vuex'
 import { Card } from '@/types'
 
 // module methods & properties specific for each game mode
-import {
-    general,
-    hearts,
-    queens,
-    fila,
-    any,
-    king,
-    quarters,
-    tens,
-    exam
-} from '@/modes/'
+import * as levelEasy from '@/modes/levelEasy'
+import * as levelMedium from '@/modes/levelMedium'
 
 // components
 import BoardCards from '@/components/BoardCards.vue'
@@ -71,6 +63,8 @@ import DeckHero from '@/components/DeckHero.vue'
 import DeckVillain from '@/components/DeckVillain.vue'
 import ExamSelect from '@/components/ExamSelect.vue'
 import CustomButtons from '@/components/CustomButtons.vue'
+import InitPage from '@/components/InitPage.vue'
+import PageHeading from '@/components/PageHeading.vue'
 
 // lodash helpers
 import { shuffle, chunk, sortBy } from 'lodash-es'
@@ -82,7 +76,9 @@ export default Vue.extend({
         BoardCards,
         BoardCardsTens,
         ExamSelect,
-        CustomButtons
+        CustomButtons,
+        InitPage,
+        PageHeading
     },
     computed: {
         ...mapState([
@@ -102,10 +98,15 @@ export default Vue.extend({
             'examination',
             'thalia',
             'gameIsOver',
-            'examAttempt'
+            'examAttempt',
+            'started',
+            'level'
         ]),
+        utils() {
+            return this.level === 'easy' ? levelEasy : levelMedium
+        },
         gameMode() {
-            return general.gameMode()
+            return levelEasy.general.gameMode()
         },
         isQuarters() {
             return this.mode === 5
@@ -208,7 +209,7 @@ export default Vue.extend({
             // w/ exception for game mode tens
             if (
                 this.initPlayer !== 3 &&
-                !general.isFlushValid(
+                !this.utils.general.isFlushValid(
                     card,
                     this.playersCards[3],
                     this.initCard
@@ -221,28 +222,37 @@ export default Vue.extend({
             // details in modes/index.ts
             switch (this.mode) {
                 case 0:
-                    if (this.initPlayer === 3 && !hearts.canInitHeart(card))
+                    if (
+                        this.initPlayer === 3 &&
+                        !this.utils.hearts.canInitHeart(card)
+                    )
                         return false
                     break
                 case 4:
-                    if (this.initPlayer === 3 && !king.canInitHeart(card))
+                    if (
+                        this.initPlayer === 3 &&
+                        !this.utils.king.canInitHeart(card)
+                    )
                         return false
-                    if (king.isRedKingFirst(card)) return false
+                    if (this.utils.king.isRedKingFirst(card)) return false
                     break
                 case 5:
                     if (
                         this.playersCards[3].length === 8 &&
-                        !quarters.canInitCard(card, this.playersCards[3])
+                        !this.utils.quarters.canInitCard(
+                            card,
+                            this.playersCards[3]
+                        )
                     )
                         return false
                     if (
                         this.initPlayer !== 3 &&
-                        !quarters.canPlayCard(card, this.initCard)
+                        !this.utils.quarters.canPlayCard(card, this.initCard)
                     )
                         return false
                     break
                 case 6:
-                    if (!tens.canPlayCard(card)) return false
+                    if (!this.utils.tens.canPlayCard(card)) return false
                     break
             }
             return true
@@ -283,23 +293,33 @@ export default Vue.extend({
                 let currentCard = {} as Card
                 switch (this.mode) {
                     case 0:
-                        currentCard = hearts.villainInitCard(sortedDeck)
+                        currentCard = this.utils.hearts.villainInitCard(
+                            sortedDeck
+                        )
                         break
                     case 1:
-                        currentCard = queens.villainInitCard(sortedDeck)
+                        currentCard = this.utils.queens.villainInitCard(
+                            sortedDeck
+                        )
                         break
                     case 2:
-                        currentCard = fila.villainInitCard(sortedDeck)
+                        currentCard = this.utils.fila.villainInitCard(
+                            sortedDeck
+                        )
                         break
                     case 4:
-                        currentCard = king.villainInitCard(sortedDeck)
+                        currentCard = this.utils.king.villainInitCard(
+                            sortedDeck
+                        )
                         break
                     case 5:
-                        currentCard = quarters.villainInitCard(sortedDeck)
+                        currentCard = this.utils.quarters.villainInitCard(
+                            sortedDeck
+                        )
                         break
 
                     default:
-                        currentCard = any.villainInitCard(sortedDeck)
+                        currentCard = this.utils.any.villainInitCard(sortedDeck)
                         break
                 }
 
@@ -325,23 +345,32 @@ export default Vue.extend({
             // villain is reacting specifically according to the particular game mode
             switch (this.mode) {
                 case 0:
-                    currentCards = hearts.villainReactCard(sortedDeck)
+                    currentCards = this.utils.hearts.villainReactCard(
+                        sortedDeck
+                    )
                     break
                 case 1:
-                    currentCards = queens.villainReactCard(sortedDeck)
+                    currentCards = this.utils.queens.villainReactCard(
+                        sortedDeck
+                    )
+                    break
+                case 2:
+                    currentCards = this.utils.fila.villainReactCard(sortedDeck)
                     break
                 case 4:
-                    currentCards = king.villainReactCard(sortedDeck)
+                    currentCards = this.utils.king.villainReactCard(sortedDeck)
                     break
                 case 5:
-                    currentCards = quarters.villainReactCards(playerCards)
+                    currentCards = this.utils.quarters.villainReactCards(
+                        playerCards
+                    )
                     break
                 case 6:
-                    currentCards = tens.villainTurn(sortedDeck)
+                    currentCards = this.utils.tens.villainTurn(sortedDeck)
                     break
 
                 default:
-                    currentCards = any.villainReactCard(sortedDeck)
+                    currentCards = this.utils.any.villainReactCard(sortedDeck)
                     break
             }
 
@@ -382,26 +411,26 @@ export default Vue.extend({
             let score = []
             switch (this.mode) {
                 case 0:
-                    score = hearts.score()
+                    score = this.utils.hearts.score()
                     break
                 case 1:
-                    score = queens.score()
+                    score = this.utils.queens.score()
                     break
                 case 2:
-                    score = fila.score()
+                    score = this.utils.fila.score()
                     break
                 case 4:
-                    score = king.score()
+                    score = this.utils.king.score()
                     break
                 case 5:
-                    score = tens.score()
+                    score = this.utils.tens.score()
                     break
                 case 6:
-                    score = tens.score()
+                    score = this.utils.tens.score()
                     break
 
                 default:
-                    score = any.score()
+                    score = this.utils.any.score()
                     break
             }
             this.setCurrentScore(
@@ -450,7 +479,7 @@ export default Vue.extend({
             this.setTensPlayed(false)
         },
         tensKnock(player: number): void {
-            if (tens.noEligeableCard(this.playersCards[player])) {
+            if (this.utils.tens.noEligeableCard(this.playersCards[player])) {
                 this.setCurrentScore(
                     this.currentScore.map((pts: number, index: number) =>
                         index === player ? pts + 1 : pts
@@ -463,7 +492,7 @@ export default Vue.extend({
         },
         // eslint-disable-next-line
         noCardsCheck(): Promise<any> {
-            if (general.noCardsCheck() && !this.isFinished) {
+            if (this.utils.general.noCardsCheck() && !this.isFinished) {
                 this.setIsFinished(true)
                 this.setHeroCanAct(false)
                 setTimeout(() => {
@@ -473,7 +502,7 @@ export default Vue.extend({
             }
             const promise = new Promise(resolve => {
                 setTimeout(() => {
-                    resolve(general.noCardsCheck())
+                    resolve(this.utils.general.noCardsCheck())
                 }, this.timeOut / 2)
             })
             return promise
@@ -587,6 +616,7 @@ export default Vue.extend({
             window.alert(
                 'Konec hry! Nyní můžete svůj výsledek uložit do tabulky rekordů.'
             )
+            this.$router.push({ name: 'Results' })
             this.setGameOver()
         }
     },
@@ -601,7 +631,9 @@ export default Vue.extend({
                 this.initCards()
                 if (this.initPlayer !== 3) {
                     this.setGame(
-                        exam.selectGame(this.playersCards[this.initPlayer])
+                        this.utils.exam.selectGame(
+                            this.playersCards[this.initPlayer]
+                        )
                     )
                     this.allVillainsInit()
                 }
@@ -610,7 +642,7 @@ export default Vue.extend({
     },
     created() {
         this.loadLocalStorage()
-        this.setVillainsNames(general.randomNames())
+        this.setVillainsNames(this.utils.general.randomNames())
         this.resetGameStats()
         this.initCards()
         this.allVillainsInit()

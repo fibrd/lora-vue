@@ -160,6 +160,33 @@ export const fila = {
         } else card = sortedDeck[0]
 
         return card
+    },
+
+    // if filtered cards turns any lower one than the init card
+    // otherwise turns a card w/ the biggest value
+    villainReactCard(sortedDeck: Card[]): Card[] {
+        const eligeableCards = filterFlushCards(sortedDeck)
+        const flushBoardCards = store.state.boardCards.filter(
+            c => c.flush === store.state.initCard.flush
+        )
+        let currentCard
+        const lowerCards = eligeableCards.filter(
+            c => c.value < Math.max(...flushBoardCards.map(c => c.value))
+        )
+
+        // if any eligeable card is available
+        if (lowerCards.length) {
+            currentCard = lowerCards[lowerCards.length - 1]
+            // if there are some filtered cards with no lower value but the bigger one
+        } else if (eligeableCards.length) {
+            currentCard =
+                store.state.boardCards.length === 3
+                    ? eligeableCards[eligeableCards.length - 1]
+                    : eligeableCards[0]
+        } else {
+            currentCard = sortedDeck[sortedDeck.length - 1]
+        }
+        return [currentCard]
     }
 }
 
@@ -364,7 +391,7 @@ export const quarters = {
 export const tens = {
     // cards array for initializing this game mode
     initCards: store.state.cards.map(c => {
-        return { ...c, src: './assets/cards/blank.png' }
+        return { ...c, src: '/assets/cardsmini/blank.jpg' }
     }) as Card[],
 
     // count current score
@@ -418,7 +445,6 @@ export const tens = {
  */
 export const exam = {
     selectGame(sortedDeck: Card[]): number {
-        if (sortedDeck.filter(c => tens.canPlayCard(c)).length > 5) return 6 // 6+ cards imidiatelly turnable in tens mode
         if (
             sortedDeck.filter(c => c.value > 3).length > 5 && // 6+ cards higher than ten
             sortedDeck.filter(c => c.value === 7).length > 1 // at least two aces in the deck

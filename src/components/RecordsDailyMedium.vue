@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p v-if="!recordsDaily">Nenalezeny žádné záznamy.</p>
+        <p v-if="!recordsDaily.length">Nenalezeny žádné záznamy.</p>
         <table v-else class="table">
             <thead>
                 <tr>

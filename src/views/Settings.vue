@@ -1,6 +1,6 @@
 <template>
     <div class="dif">
-        <h1 class="text-center">Nastavení</h1>
+        <h2 class="text-center">Nastavení</h2>
 
         <div>
             <label for="nameInput">Jméno: </label>
@@ -81,5 +81,6 @@ export default Vue.extend({
 div {
     font-size: 1.1em;
     line-height: 1.4em;
+    margin-bottom: 0.2em;
 }
 </style>

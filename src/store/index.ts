@@ -91,6 +91,12 @@ export default new Vuex.Store({
         },
         SET_RECORDS_MONTHLY(state, recordsMonthly) {
             state.recordsMonthly = recordsMonthly
+        },
+        SET_LEVEL(state, level) {
+            state.level = level
+        },
+        START_GAME(state) {
+            state.started = true
         }
     },
     actions: {
@@ -191,6 +197,12 @@ export default new Vuex.Store({
         },
         setRecordsMonthly({ commit }, recordsMonthly) {
             commit('SET_RECORDS_MONTHLY', recordsMonthly)
+        },
+        setLevel({ commit }, level) {
+            commit('SET_LEVEL', level)
+        },
+        startGame({ commit }) {
+            commit('START_GAME')
         }
     }
 })

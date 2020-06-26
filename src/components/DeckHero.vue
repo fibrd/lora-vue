@@ -56,17 +56,18 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .card {
-    transition: all 0.2s ease-in;
+    transition: all 0.1s ease-in;
     margin: 0 0.1em;
     &:hover,
     &:focus {
         cursor: pointer;
-        transform: scale(1.1);
+        transform: scale(1.02);
     }
 }
 .hero-wrapper {
     position: relative;
     max-width: 60em;
+    min-height: 6.5em;
     margin: 0em auto;
 }
 
