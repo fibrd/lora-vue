@@ -111,10 +111,16 @@ export default new Vuex.Store({
         },
         setBoardCards({ state, commit }, cards) {
             commit('SET_BOARD_CARDS', cards)
-            if (cards.length)
+            if (!cards.length) return
+            if (state.mode !== 6)
                 commit('SET_ALREADY_PLAYED_CARDS', [
                     ...state.alreadyPlayedCards,
                     cards[cards.length - 1]
+                ])
+            else
+                commit('SET_ALREADY_PLAYED_CARDS', [
+                    ...state.alreadyPlayedCards,
+                    ...cards
                 ])
         },
         setInitCard({ commit }, card) {

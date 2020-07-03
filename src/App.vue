@@ -11,8 +11,8 @@
                 />
             </div>
             <exam-select v-if="mode === 7" />
-            <board-cards v-if="!isTens" />
-            <board-cards-tens v-else />
+            <board-cards v-show="!isTens" />
+            <board-cards-tens v-show="isTens" />
             <custom-buttons
                 v-show="heroCanAct && !isFinished"
                 @giveUp="giveUp"
@@ -252,7 +252,7 @@ export default Vue.extend({
                         return false
                     break
                 case 6:
-                    if (!this.utils.tens.canPlayCard(card)) return false
+                    if (!this.utils.tens.canPlayCard(card, [])) return false
                     break
             }
             return true

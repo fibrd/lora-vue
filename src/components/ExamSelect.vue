@@ -34,11 +34,6 @@ export default Vue.extend({
         examPicked(event: any) {
             this.setGame(event.target.value)
         }
-    },
-    watch: {
-        examAttempt(value) {
-            console.log(value)
-        }
     }
 })
 </script>

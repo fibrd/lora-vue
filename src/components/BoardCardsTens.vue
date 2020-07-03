@@ -27,7 +27,7 @@ export default Vue.extend({
         }
     },
     computed: {
-        ...mapState(['alreadyPlayedCards']),
+        ...mapState(['alreadyPlayedCards', 'isFinished']),
         flushSortedCards(): Card[][] {
             return [
                 this.filterFlush(this.cardsPlayed, 0),
@@ -54,6 +54,10 @@ export default Vue.extend({
     watch: {
         alreadyPlayedCards(value: Card[]) {
             this.addNewCards(value)
+        },
+        isFinished() {
+            this.cardsPlayed = tens.initCards
+            this.addNewCards(this.alreadyPlayedCards)
         }
     },
     created() {
