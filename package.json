@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@types/lodash-es": "^4.17.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.6.4",
     "lodash-es": "^4.17.15",
     "moment": "^2.26.0",
